@@ -19,25 +19,25 @@ const ITEMS = [
     // icon: <SnippetsOutlined />,
     children: [
       {
-        label: "寻物启示列表",
+        label: "寻物启示大厅",
         key: "/lossitem",
         // role: USER_ROLE.USER,
       },
       {
-        label: "添加寻物启事",
+        label: "个人寻物信息",
         key: "/lossitem/add",
         // role: USER_ROLE.ADMIN,
       },
     ],
   },
   {
-    label: "失物招领公示",
+    label: "失物招领",
     key: "founditem",
     // role: USER_ROLE.USER,
     // icon: <SolutionOutlined />,
     children: [
       {
-        label: "失物招领列表",
+        label: "失物招领大厅",
         key: "/founditem",
         // role: USER_ROLE.USER,
       },
@@ -49,10 +49,21 @@ const ITEMS = [
     ],
   },
   {
-    label: "失物领取记录",
-    key: "/returnitem",
+    label: "失物领取/审核",
+    key: "returnitem",
     // icon: <ProfileOutlined />,
     // role: USER_ROLE.ADMIN,
+    children: [
+      {
+        label: "领取记录",
+        key: "/returnitem",
+        // role: USER_ROLE.ADMIN,
+      },
+      // {
+      //   label: "领取详情",
+      //   key: "/returnitem/detail",
+      // }
+    ]
   },
   {
     label: "用户管理",
@@ -137,33 +148,32 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="favicon.ico" />
       </head>
-      <body>
-        <Layout className={styles.container}>
-          <Header className={styles.header}>
-            校园失物招领系统
-            <span className={styles.user}>
-              {/* <Dropdown menu={{ items: USER_ITEMS }} placement="bottom"> */}
-              <Dropdown menu={{ items: USER_ITEMS }} placement="bottom">
-                <span onClick={(e) => e.preventDefault()}>
-                  <Space>
-                    {/* {user?.nickName} */}
-                    管理员
-                    <DownOutlined />
-                  </Space>
-                </span>
-              </Dropdown>
-            </span>
-          </Header>
-          <Content style={{ padding: '0 48px' }}>
+      <body >
+        <main className={styles.container}>
+          <Layout >
+            <Header className={styles.header}>
+              校园失物招领系统
+              <span className={styles.user}>
+                {/* <Dropdown menu={{ items: USER_ITEMS }} placement="bottom"> */}
+                <Dropdown menu={{ items: USER_ITEMS }} placement="bottom">
+                  <span onClick={(e) => e.preventDefault()}>
+                    <Space>
+                      {/* {user?.nickName} */}
+                      管理员
+                      <DownOutlined />
+                    </Space>
+                  </span>
+                </Dropdown>
+              </span>
+            </Header>
+            {/* <Content> */}
             {/* <Breadcrumb style={{ margin: '16px 0' }}>
               <Breadcrumb.Item>Home</Breadcrumb.Item>
               <Breadcrumb.Item>List</Breadcrumb.Item>
               <Breadcrumb.Item>App</Breadcrumb.Item>
-            </Breadcrumb> 面包屑*/}
-            <Layout
-              style={{ padding: '24px 0', background: colorBgContainer, borderRadius: borderRadiusLG }}
-            >
-              <Sider style={{ background: colorBgContainer }} width={200}>
+              </Breadcrumb> 面包屑*/}
+            <Layout >
+              <Sider className={styles.sider}>
                 <Menu
                   className={styles.menu}
                   onClick={handleChangeMenu}
@@ -174,15 +184,13 @@ export default function RootLayout({
                   defaultOpenKeys={defaultOpenKeys}
                 />
               </Sider>
-              <Content style={{ padding: '0 24px', minHeight: 280 }}>
+              <Content className={styles.content}>
                 {children}
               </Content>
             </Layout>
-          </Content>
-          <Footer style={{ textAlign: 'center' }}>
-            Ant Design ©{new Date().getFullYear()} Created by Ant UED
-          </Footer>
-        </Layout>
+            {/* </Content> */}
+          </Layout>
+        </main>
       </body>
     </html>
 
