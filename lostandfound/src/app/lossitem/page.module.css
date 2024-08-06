@@ -1,0 +1,4 @@
+.table_item {
+    overflow: auto;
+    height: calc(100% - 88px);
+}

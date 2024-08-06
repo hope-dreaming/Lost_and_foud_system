@@ -1,5 +1,6 @@
+import LossitemLayout from "@/components/LossitemForm.tsx/page";
 export default function LossitemAdd() {
     return (
-        <div>添加寻物信息</div>
+        <LossitemLayout />
     );
 }

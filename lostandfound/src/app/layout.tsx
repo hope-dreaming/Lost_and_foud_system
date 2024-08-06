@@ -13,18 +13,23 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const ITEMS = [
   {
-    label: "寻物启示",
+    label: "寻物启事",
     key: "lossitem",
     // role: USER_ROLE.USER,
     // icon: <SnippetsOutlined />,
     children: [
       {
-        label: "寻物启示大厅",
+        label: "寻物启事大厅",
         key: "/lossitem",
         // role: USER_ROLE.USER,
       },
       {
         label: "个人寻物信息",
+        key: "/lossitem/show",
+        // role: USER_ROLE.ADMIN,
+      },
+      {
+        label: "添加寻物启事",
         key: "/lossitem/add",
         // role: USER_ROLE.ADMIN,
       },
@@ -42,6 +47,11 @@ const ITEMS = [
         // role: USER_ROLE.USER,
       },
       {
+        label: "个人拾物信息",
+        key: "/founditem/show",
+        // role: USER_ROLE.ADMIN,
+      },
+      {
         label: "添加失物招领",
         key: "/founditem/add",
         // role: USER_ROLE.ADMIN,
@@ -49,20 +59,20 @@ const ITEMS = [
     ],
   },
   {
-    label: "失物领取/审核",
+    label: "失物领取记录",
     key: "returnitem",
     // icon: <ProfileOutlined />,
     // role: USER_ROLE.ADMIN,
     children: [
       {
-        label: "领取记录",
+        label: "待办事项",
         key: "/returnitem",
         // role: USER_ROLE.ADMIN,
       },
-      // {
-      //   label: "领取详情",
-      //   key: "/returnitem/detail",
-      // }
+      {
+        label: "完成事项",
+        key: "/returnitem/detail",
+      }
     ]
   },
   {
