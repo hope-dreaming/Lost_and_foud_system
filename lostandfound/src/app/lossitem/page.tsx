@@ -7,6 +7,7 @@ import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { getLossItemList } from '@/api/lossitem';
 import { LossitemQuery } from '@/types';
+import Content from '@/components/Content';
 
 export default function Lossitem() {
 
@@ -243,56 +244,61 @@ export default function Lossitem() {
 
     return (
         <>
-            <Form
-                form={form}
-                name="lossitem_search"
-                // layout="inline"
-                onFinish={handleSearchFinish}
-                initialValues={{
-                    item_name: '',
-                    item_type: ''
-                }}
-
+            <Content
+                title="寻物启事大厅"
             >
-                <Row gutter={19}>
-                    <Col span={5}>
-                        <Form.Item name="item_name" label="失物名称" >
-                            <Input placeholder='请输入物品名称' />
-                        </Form.Item>
-                    </Col>
-                    <Col span={5}>
-                        <Form.Item name="item_type" label="失物类型" >
-                            <Input placeholder='请输入物品类型' />
-                        </Form.Item>
-                    </Col>
-                    <Col span={9}>
-                        <Form.Item>
-                            <Space>
-                                <Button type="primary" htmlType="submit">
-                                    搜索
-                                </Button>
-
-                                <Button onClick={handleSearchReset}>
-                                    清空
-                                </Button>
-                            </ Space>
-                        </Form.Item>
-                    </Col>
-                </Row>
-            </Form>
-            <div className={styles.table_item}>
-                <Table
-                    dataSource={data}
-                    columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
-                    onChange={handleTableChange}
-                    scroll={{ x: 1000 }}
-                    pagination={{
-                        ...pagination,
-                        total: total,
-                        showTotal: () => `共${total}条数据`
+                <Form
+                    form={form}
+                    name="lossitem_search"
+                    // layout="inline"
+                    onFinish={handleSearchFinish}
+                    initialValues={{
+                        item_name: '',
+                        item_type: ''
                     }}
-                />;
-            </div>
+
+                >
+                    <Row gutter={19}>
+                        <Col span={5}>
+                            <Form.Item name="item_name" label="失物名称" >
+                                <Input placeholder='请输入物品名称' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={5}>
+                            <Form.Item name="item_type" label="失物类型" >
+                                <Input placeholder='请输入物品类型' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={9}>
+                            <Form.Item>
+                                <Space>
+                                    <Button type="primary" htmlType="submit">
+                                        搜索
+                                    </Button>
+
+                                    <Button onClick={handleSearchReset}>
+                                        清空
+                                    </Button>
+                                </ Space>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form>
+                <div className={styles.table_item}>
+                    <Table
+                        dataSource={data}
+                        columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
+                        onChange={handleTableChange}
+                        scroll={{ x: 1000 }}
+                        sticky={{ offsetHeader: 0, offsetScroll: -1 }}
+                        pagination={{
+                            ...pagination,
+                            total: total,
+                            showTotal: (total) => `共${total}条数据`
+                        }}
+                    />;
+                </div>
+            </Content>
         </>
     );
 }

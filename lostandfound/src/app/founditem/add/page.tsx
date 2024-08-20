@@ -1,4 +1,4 @@
-import FounditemLayout from "@/components/FounditemForm.tsx/page";
+import FounditemLayout from "@/components/FounditemForm/page";
 
 export default function FounditemAdd() {
     return (
