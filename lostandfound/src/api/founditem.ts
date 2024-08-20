@@ -15,3 +15,9 @@ export async function addLossItemInform(params: LossitemType) {
     const res = await request.post(url, params);
     return res
 }
+
+export async function deleteFounditem(id: string) {
+    const url = `/api/deleteFounditem?id=${id}`;
+    const res = await request.get(url);
+    return res
+}

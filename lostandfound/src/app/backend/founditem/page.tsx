@@ -1,18 +1,22 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { getLossItemList } from '@/api/lossitem';
 import { LossitemQuery } from '@/types';
 import Content from '@/components/Content';
-import { getFoundItemList } from '@/api/founditem';
+import { deleteFounditem, getFoundItemList } from '@/api/founditem';
+import { useRouter } from 'next/navigation';
+import { FounditemQuery } from '@/types/founditem'
+
 
 export default function Lossitem() {
 
     const [form] = Form.useForm();
+    const router = useRouter()
 
     // const user = useCurrentUser();
     // const [list, setList] = useState<BookType[]>([]);
@@ -23,6 +27,63 @@ export default function Lossitem() {
     //   pageSize: 20,
     //   showSizeChanger: true,
     // });
+    const handleFoundEdit = () => {
+        router.push("/founditem/edit/id")
+    }
+    const handleFoundDelete = async (id: string) => {
+        await deleteFounditem(id)
+        message.success('删除成功')
+    }
+
+    const [total, setTotal] = useState(0);
+    const [data, setData] = useState([])
+
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 20,
+        showSizeChanger: true,
+    })
+
+    // 搜索
+    const handleSearchFinish = async (values: FounditemQuery) => {
+        // console.log('Received values from form: ', values);
+        const res = getLossItemList(values)
+
+
+    };
+    // 搜索框重置
+    const handleSearchReset = () => {
+        // console.log(form)
+        form.resetFields();
+    }
+    // 获取数据
+    async function fetchData(search?: FounditemQuery) {
+        try {
+            const data = await getFoundItemList()
+            // console.log(res)
+            setData(data)
+            // console.log(res)
+        }
+        catch (e) {
+            console.error(e)
+        }
+    }
+
+    useEffect(() => {
+
+        fetchData()
+        // setPagination({ ...pagination, total: dataSource.length })
+
+    }, [])
+
+    const handleTableChange = (pagination: TablePaginationConfig) => {
+        setPagination({
+            current: pagination.current ?? 1,
+            pageSize: pagination.pageSize ?? 15,
+            showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
+        })
+    }
+
     const columns = [
         {
             title: '物品名称',
@@ -75,8 +136,8 @@ export default function Lossitem() {
                 <Flex>
                     <Space size="middle">
 
-                        <Button type="primary" ghost onClick={() => { }}>编辑</Button>
-                        <Button type="primary" danger ghost onClick={() => { }}>删除</Button>
+                        <Button type="primary" ghost onClick={() => { handleFoundEdit }}>编辑</Button>
+                        <Button type="primary" danger ghost onClick={() => { handleFoundDelete }}>删除</Button>
 
                     </Space>
                 </Flex>
@@ -84,53 +145,6 @@ export default function Lossitem() {
 
         }
     ];
-    const [total, setTotal] = useState(0);
-    const [data, setData] = useState([])
-
-    const [pagination, setPagination] = useState({
-        current: 1,
-        pageSize: 20,
-        showSizeChanger: true,
-    })
-
-    const handleSearchFinish = async (values: LossitemQuery) => {
-        // console.log('Received values from form: ', values);
-        const res = getLossItemList(values)
-
-
-    };
-
-    const handleSearchReset = () => {
-        // console.log(form)
-        form.resetFields();
-    }
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getFoundItemList()
-                // console.log(res)
-                setData(data)
-                // console.log(res)
-            }
-            catch (e) {
-                console.error(e)
-            }
-        }
-        fetchData()
-        // setPagination({ ...pagination, total: dataSource.length })
-
-    }, [])
-
-    const handleTableChange = (pagination: TablePaginationConfig) => {
-        setPagination({
-            current: pagination.current ?? 1,
-            pageSize: pagination.pageSize ?? 15,
-            showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
-        })
-    }
-
 
 
     return (
