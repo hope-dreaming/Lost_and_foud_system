@@ -8,7 +8,7 @@ const router = express.Router()
 router.post('/login', login)
 
 // 用户
-router.get('/queryUserList', queryUserList)
+router.post('/queryUserList', queryUserList)
 
 router.post('/queryUserInfo', queryUserInfo)
 

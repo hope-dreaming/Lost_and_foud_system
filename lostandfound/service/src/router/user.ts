@@ -7,10 +7,15 @@ import { message } from "antd";
 const queryUserList = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
+        const { item_tele, item_name, item_status } = req.body
+        const whereUserList = {
+            ...((item_tele !== null && item_tele !== undefined && item_tele !== '') ? { tele: item_tele } : {}),
+            ...((item_name !== null && item_name !== undefined && item_name !== '') ? { name: item_name } : {}),
+            ...((item_status !== null && item_status !== undefined && item_status !== '') ? { status: item_status } : {}),
+            role: "user",
+        }
         const userList = await User.findAll({
-            where: {
-                role: "user",
-            }
+            where: whereUserList,
         })
         if (!userList)
             return res.send({ status: 401, message: '无用户', data: null })

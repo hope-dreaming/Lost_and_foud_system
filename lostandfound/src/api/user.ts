@@ -7,7 +7,7 @@ export const setLogout = async () => {
 };
 
 export const getUserList = (params?: UserQueryType) => {
-    return request.get(`/api/queryUserList`);
+    return request.post("/api/queryUserList/", params);
 };
 
 export const getUserDetail = (id: string) => {

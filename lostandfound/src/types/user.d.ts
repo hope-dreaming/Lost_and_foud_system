@@ -19,9 +19,9 @@ export interface UserLoginType {
 export interface UserQueryType {
     current?: number;
     pageSize?: number;
-    name?: string;
-    tele?: string;
-    status?: USER_STATUS;
+    item_name?: string;
+    item_tele?: string;
+    item_status?: USER_STATUS;
 }
 
 export interface UserFormProps {

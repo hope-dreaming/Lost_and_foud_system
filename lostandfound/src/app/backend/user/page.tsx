@@ -116,9 +116,8 @@ export default function User() {
     })
 
     const handleSearchFinish = async (values: UserQueryType) => {
-        // console.log('Received values from form: ', values);
-        const res = getUserList(values)
-
+        console.log('Received values from form: ', values);
+        fetchData(values)
 
     };
 
@@ -129,13 +128,13 @@ export default function User() {
 
     const fetchData = useCallback(
         (search?: UserQueryType) => {
-            const { name, status, tele } = search || {};
+            const { item_name, item_status, item_tele } = search || {};
             getUserList({
                 current: pagination.current as number,
                 pageSize: pagination.pageSize as number,
-                ...(name && { name }),
-                ...(status && { status }),
-                ...(tele && { tele }),
+                item_name,
+                item_status,
+                item_tele,
             }).then((res) => {
                 setList(res.data);
                 // console.log(res)
@@ -196,18 +195,19 @@ export default function User() {
                     onFinish={handleSearchFinish}
                     initialValues={{
                         item_name: '',
-                        item_type: ''
+                        item_status: '',
+                        item_tele: ''
                     }}
 
                 >
                     <Row gutter={19}>
                         <Col span={5}>
-                            <Form.Item name="item_name" label="账号" >
+                            <Form.Item name="item_tele" label="账号" >
                                 <Input placeholder='请输入电话号码' />
                             </Form.Item>
                         </Col>
                         <Col span={5}>
-                            <Form.Item name="status" label="状态">
+                            <Form.Item name="item_status" label="状态">
                                 <Select placeholder="请选择" allowClear>
                                     <Option key={USER_STATUS.ON} value={USER_STATUS.ON}>
                                         正常
@@ -219,7 +219,7 @@ export default function User() {
                             </Form.Item>
                         </Col>
                         <Col span={5}>
-                            <Form.Item name="item_type" label="用户名" >
+                            <Form.Item name="item_name" label="用户名" >
                                 <Input placeholder='请输入用户名' />
                             </Form.Item>
                         </Col>
