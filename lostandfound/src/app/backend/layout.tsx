@@ -3,11 +3,12 @@
 import React, { useEffect } from 'react';
 import { LaptopOutlined, NotificationOutlined, UserOutlined, DownOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Breadcrumb, Dropdown, Layout, Menu, Space, theme } from 'antd';
+import { Breadcrumb, Dropdown, Layout, Menu, message, Space, theme } from 'antd';
 import styles from './page.module.css'
 import Head from 'next/head';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { setLogout } from '@/api';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -141,11 +142,22 @@ export default function RootLayout({
   const USER_ITEMS: MenuProps["items"] = [
     {
       key: "1",
-      label: "个人中心",
+      label: <Link href="/backend/user">个人中心</Link>,
     },
     {
       key: "2",
-      label: "退出",
+      label: (
+        <span
+          onClick={async () => {
+            // await setLogout();
+            // localStorage.removeItem("user");
+            message.success("退出成功");
+            router.push("/login");
+          }}
+        >
+          退出
+        </span>
+      ),
     }
   ]
 

@@ -7,6 +7,7 @@ export interface UserType {
     status?: USER_STATUS;
     sexy: USER_SEXY;
     uid?: string;
+    password: string;
 
 }
 

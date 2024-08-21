@@ -33,11 +33,7 @@ export default function Login() {
 
     return (
         <>
-            <Head>
-                <title>登陆</title>
-                <meta name="description" content="失物招领系统" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-            </Head>
+
             <div className={styles.main}>
                 <header className={styles.header}>
                     失物招领系统
