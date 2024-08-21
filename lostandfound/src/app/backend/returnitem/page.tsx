@@ -25,51 +25,21 @@ export default function Returnitem() {
     // });
     const columns = [
         {
-            title: '物品名称',
-            dataIndex: 'name',
-            key: 'name',
+            title: '领取人账号',
+            dataIndex: 'tele',
+            key: 'tele',
             align: 'center',
         },
         {
-            title: '物品类型',
-            dataIndex: 'type',
-            key: 'type',
-            align: 'center',
-        },
-        {
-            title: '描述',
-            dataIndex: 'desc',
-            key: 'desc',
-            align: 'center',
-            ellipsis: true,
-            render: (text: string) => {
-                return <Tooltip title={text} placement='topLeft'>
-                    {text}
-                </Tooltip>
-            }
-        },
-        {
-            title: '拾取时间',
+            title: '申请领取时间',
             dataIndex: 'time',
             key: 'time',
             align: 'center',
         },
         {
-            title: '拾取位置',
-            dataIndex: 'address',
-            key: 'address',
-            align: 'center',
-        },
-        {
-            title: '拾取人',
-            dataIndex: 'owner',
-            key: 'owner',
-            align: 'center',
-        },
-        {
-            title: '领取人',
-            dataIndex: 'receiver',
-            key: 'receiver',
+            title: '领取物品编号',
+            dataIndex: 'fid',
+            key: 'fid',
             align: 'center',
         },
         {
@@ -157,13 +127,13 @@ export default function Returnitem() {
                 >
                     <Row gutter={19}>
                         <Col span={5}>
-                            <Form.Item name="item_name" label="物品名称" >
-                                <Input placeholder='请输入物品名称' />
+                            <Form.Item name="item_tele" label="申请账号" >
+                                <Input placeholder='请输入申请账号' />
                             </Form.Item>
                         </Col>
                         <Col span={5}>
-                            <Form.Item name="item_type" label="物品类型" >
-                                <Input placeholder='请输入物品类型' />
+                            <Form.Item name="item_fid" label="物品编号" >
+                                <Input placeholder='请输入物品编号' />
                             </Form.Item>
                         </Col>
                         <Col span={9}>
