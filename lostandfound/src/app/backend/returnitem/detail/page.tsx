@@ -1,28 +1,30 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { getLossItemList } from '@/api/lossitem';
-import { LossitemQuery } from '@/types';
+import { LossitemQuery, ReturnitemQueryType } from '@/types';
 import Content from '@/components/Content';
 import { getFoundItemList } from '@/api/founditem';
+import { useCurrentUser } from '@/utils/hoos';
+import { usePathname } from 'next/navigation';
+import { getReturnItemList } from '@/api';
 
 export default function Returnitemdetail() {
 
     const [form] = Form.useForm();
 
-    // const user = useCurrentUser();
-    // const [list, setList] = useState<BookType[]>([]);
-    // const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
-    // const [total, setTotal] = useState(0);
-    // const [pagination, setPagination] = useState<TablePaginationConfig>({
-    //   current: 1,
-    //   pageSize: 20,
-    //   showSizeChanger: true,
-    // });
+    const user = useCurrentUser();
+    const pathname = usePathname();
+    let isok: number;
+    if (pathname === '/backend/returnitem')
+        isok = 2
+    else if (pathname === '/backend/returnitem/detail')
+        isok = 4
+
     const columns = [
         {
             title: '领取人',
@@ -32,14 +34,14 @@ export default function Returnitemdetail() {
         },
         {
             title: '申请时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'date',
+            key: 'date',
             align: 'center',
         },
         {
             title: '审核人',
-            dataIndex: 'atele',
-            key: 'atele',
+            dataIndex: 'uaid',
+            key: 'uaid',
             align: 'center',
         },
         {
@@ -53,6 +55,12 @@ export default function Returnitemdetail() {
             dataIndex: 'isok',
             key: 'isok',
             align: 'center',
+            render: (text: number) =>
+                text === 1 ? (
+                    <Tag color="green">通过</Tag>
+                ) : (
+                    <Tag color="red">驳回</Tag>
+                ),
         },
 
     ];
@@ -65,10 +73,9 @@ export default function Returnitemdetail() {
         showSizeChanger: true,
     })
 
-    const handleSearchFinish = async (values: LossitemQuery) => {
-        // console.log('Received values from form: ', values);
-        const res = getLossItemList(values)
-
+    const handleSearchFinish = async (values: ReturnitemQueryType) => {
+        console.log('Received values from form: ', values);
+        fetchData(values)
 
     };
 
@@ -77,23 +84,31 @@ export default function Returnitemdetail() {
         form.resetFields();
     }
 
+    const fetchData = useCallback(
+        (search?: ReturnitemQueryType) => {
+            const { item_fid, item_tele, item_uaid } = search || {};
+            getReturnItemList({
+                current: pagination.current as number,
+                pageSize: pagination.pageSize as number,
+                item_fid,
+                item_tele,
+                item_uaid,
+                role: user?.role,
+                isok,
+                userId: user?.tele
+            }).then((res) => {
+                setData(res.data);
+                console.log(res)
+                setTotal(res.total);
+            });
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [pagination, user?.role]
+    );
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getFoundItemList()
-                // console.log(res)
-                setData(data)
-                // console.log(res)
-            }
-            catch (e) {
-                console.error(e)
-            }
-        }
-        fetchData()
-        // setPagination({ ...pagination, total: dataSource.length })
-
-    }, [])
+        fetchData();
+    }, [fetchData, pagination]);
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         setPagination({
@@ -102,8 +117,6 @@ export default function Returnitemdetail() {
             showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
         })
     }
-
-
 
     return (
         <>
@@ -128,7 +141,7 @@ export default function Returnitemdetail() {
                             </Form.Item>
                         </Col>
                         <Col span={5}>
-                            <Form.Item name="item_atele" label="管理员账号" >
+                            <Form.Item name="item_uaid" label="管理员账号" >
                                 <Input placeholder='请输入管理员账号' />
                             </Form.Item>
                         </Col>
