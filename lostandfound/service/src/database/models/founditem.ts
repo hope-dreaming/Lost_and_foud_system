@@ -1,5 +1,5 @@
 import { sequelize, DataTypes } from '../init'
-import User from './user'
+import { User } from './user'
 
 const Founditem = sequelize.define('founditems', {
     fid: {
@@ -9,41 +9,41 @@ const Founditem = sequelize.define('founditems', {
         primaryKey: true,
         autoIncrement: true,
     },
-    fname: {
+    name: {
         type: DataTypes.STRING(20),
         allowNull: false,
     },
-    fdate: {
+    date: {
         type: DataTypes.DATE,
         allowNull: false,
     },
-    fplace: {
+    place: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     },
-    ftype: {
+    type: {
         type: DataTypes.STRING(20),
         allowNull: true,
     },
-    fdesc: {
+    desc: {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    fisreturn: {
+    isreturn: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
     },
-    utele: {
-        type: DataTypes.STRING(20),
+    uid: {
+        type: DataTypes.BIGINT,
         allowNull: false,
         references: {
             model: User,
-            key: 'utele',
+            key: 'uid',
         },
     }
 
 
 })
 
-export default Founditem
+export { Founditem }

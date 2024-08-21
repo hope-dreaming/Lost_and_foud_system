@@ -1,4 +1,3 @@
-require('./models/admin')
 require('./models/user')
 require('./models/lossitem')
 require('./models/founditem')

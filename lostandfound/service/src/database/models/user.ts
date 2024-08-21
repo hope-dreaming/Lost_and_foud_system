@@ -1,30 +1,45 @@
 import { sequelize, DataTypes } from '../init'
 
 const User = sequelize.define('users', {
-    utele: {
-        type: DataTypes.STRING(20),
+    uid: {
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
         primaryKey: true,
-        //   autoIncrement: true,
+        autoIncrement: true,
     },
-    upssword: {
+    tele: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        unique: true,
+    },
+    pssword: {
         type: DataTypes.STRING(20),
         allowNull: false,
     },
-    uname: {
+    name: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+    },
+    uno: {
         type: DataTypes.STRING(20),
         allowNull: true,
     },
-    uid: {
-        type: DataTypes.STRING(20),
-        allowNull: true,
-    },
-    usexy: {
+    sexy: {
         type: DataTypes.STRING(10),
-        allowNull: true,
-    }
+        allowNull: false,
+    },
+    role: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+    },
+    status: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+
+
 
 })
 
-export default User
+export { User }

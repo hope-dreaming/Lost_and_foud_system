@@ -1,7 +1,6 @@
 import { sequelize, DataTypes } from '../init'
-import Admin from './admin'
-import Founditem from './founditem'
-import User from './user'
+import { Founditem } from './founditem'
+import { User } from './user'
 
 const Returnitem = sequelize.define('returnitems', {
     rid: {
@@ -11,28 +10,28 @@ const Returnitem = sequelize.define('returnitems', {
         primaryKey: true,
         autoIncrement: true,
     },
-    rdate: {
+    date: {
         type: DataTypes.DATE,
         allowNull: false,
     },
-    risok: {
+    isok: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
-    utele: {
-        type: DataTypes.STRING(20),
+    uid: {
+        type: DataTypes.BIGINT,
         allowNull: false,
         references: {
             model: User,
-            key: 'utele',
+            key: 'uid',
         },
     },
-    aid: {
-        type: DataTypes.STRING(10),
+    uaid: {
+        type: DataTypes.BIGINT,
         allowNull: false,
         references: {
-            model: Admin,
-            key: 'aid',
+            model: User,
+            key: 'uid',
         }
     },
     fid: {
@@ -47,4 +46,4 @@ const Returnitem = sequelize.define('returnitems', {
 
 })
 
-export default Returnitem
+export { Returnitem }

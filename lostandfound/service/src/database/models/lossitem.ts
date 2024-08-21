@@ -1,5 +1,5 @@
 import { sequelize, DataTypes } from '../init'
-import User from './user'
+import { User } from './user'
 
 const Lossitem = sequelize.define('lossitems', {
     lid: {
@@ -9,41 +9,41 @@ const Lossitem = sequelize.define('lossitems', {
         primaryKey: true,
         autoIncrement: true,
     },
-    lname: {
+    name: {
         type: DataTypes.STRING(20),
         allowNull: false,
     },
-    ldate: {
+    date: {
         type: DataTypes.DATE,
         allowNull: false,
     },
-    lplace: {
+    place: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     },
-    ltype: {
+    type: {
         type: DataTypes.STRING(20),
         allowNull: true,
     },
-    ldesc: {
+    desc: {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    lisreturn: {
+    isfound: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
     },
-    utele: {
-        type: DataTypes.STRING(20),
+    uid: {
+        type: DataTypes.BIGINT,
         allowNull: false,
         references: {
             model: User,
-            key: 'utele',
+            key: 'uid',
         },
     }
 
 
 })
 
-export default Lossitem
+export { Lossitem }
