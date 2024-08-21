@@ -1,31 +1,38 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Col, Flex, Form, Input, message, Modal, Row, Select, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { getLossItemList } from '@/api/lossitem';
-import { LossitemQuery } from '@/types';
+import { LossitemQuery, UserQueryType, UserType } from '@/types';
 import Content from '@/components/Content';
 import { getFoundItemList } from '@/api/founditem';
+import { title } from 'process';
+import { USER_STATUS } from '@/constants';
+import { getUserList, userDelete, userUpdate } from '@/api';
+const Option = Select.Option;
+
+const STATUS = {
+    ON: 1,
+    OFF: 0,
+}
+export const STATUS_OPTIONS = [
+    { label: "正常", value: STATUS.ON },
+    { label: "禁用", value: STATUS.OFF }
+];
 
 export default function User() {
 
     const [form] = Form.useForm();
-
+    const [list, setList] = useState<UserType[]>([]);
     // const user = useCurrentUser();
-    // const [list, setList] = useState<BookType[]>([]);
-    // const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
-    // const [total, setTotal] = useState(0);
-    // const [pagination, setPagination] = useState<TablePaginationConfig>({
-    //   current: 1,
-    //   pageSize: 20,
-    //   showSizeChanger: true,
-    // });
+
+
     const columns = [
         {
-            title: '电话号码',
+            title: '账号',
             dataIndex: 'tele',
             key: 'tele',
             align: 'center',
@@ -35,6 +42,18 @@ export default function User() {
             dataIndex: 'name',
             key: 'name',
             align: 'center',
+        },
+        {
+            title: '状态',
+            dataIndex: 'status',
+            key: 'status',
+            ellipsis: true,
+            render: (text: number) =>
+                text === 1 ? (
+                    <Tag color="green">正常</Tag>
+                ) : (
+                    <Tag color="red">已禁用</Tag>
+                ),
         },
         {
             title: '性别',
@@ -54,12 +73,33 @@ export default function User() {
             dataIndex: 'action',
             key: 'action',
             align: 'center',
-            render: (_: any, record: any) => (
+            render: (_: any, row: UserType) => (
                 <Flex>
                     <Space size="middle">
 
-                        <Button type="primary" ghost onClick={() => { }}>编辑</Button>
-                        <Button type="primary" danger ghost onClick={() => { }}>删除</Button>
+                        <Button type="primary" ghost onClick={() => {
+                            // setEditData(row);
+                            // router.push(`/user/edit/${row._id}`);
+                            handleUserEdit(row.tele)
+                        }}
+                        >
+                            编辑
+                        </Button>
+                        <Button
+                            type="link"
+                            danger={row.status === USER_STATUS.ON}
+                            onClick={() => {
+                                handleStatusUpdate(row);
+                            }}
+                        >
+                            {row.status === USER_STATUS.ON ? "禁用" : "启动"}
+                        </Button>
+                        <Button type="primary" danger ghost onClick={() => {
+                            handleDeleteModal(row.tele);
+                        }}
+                        >
+                            删除
+                        </Button>
 
                     </Space>
                 </Flex>
@@ -88,23 +128,25 @@ export default function User() {
         form.resetFields();
     }
 
+    const fetchData = useCallback(
+        (search?: UserQueryType) => {
+            const { name, status } = search || {};
+            getUserList({
+                current: pagination.current as number,
+                pageSize: pagination.pageSize as number,
+                ...(name && { name }),
+                ...(status && { status }),
+            }).then((res) => {
+                setList(res.data);
+                setTotal(res.total);
+            });
+        },
+        [pagination]
+    );
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getFoundItemList()
-                // console.log(res)
-                setData(data)
-                // console.log(res)
-            }
-            catch (e) {
-                console.error(e)
-            }
-        }
-        fetchData()
-        // setPagination({ ...pagination, total: dataSource.length })
-
-    }, [])
+        fetchData();
+    }, [fetchData, pagination]);
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         setPagination({
@@ -112,6 +154,31 @@ export default function User() {
             pageSize: pagination.pageSize ?? 15,
             showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
         })
+    }
+
+    const handleDeleteModal = (tele: string) => {
+        Modal.confirm({
+            title: "确认删除？",
+            //   icon: <ExclamationCircleFilled />,
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                await userDelete(tele);
+                message.success("删除成功");
+                fetchData(form.getFieldsValue());
+            },
+        });
+    };
+    const handleStatusUpdate = async (row: UserType) => {
+        await userUpdate(row.tele, {
+            ...row,
+            status: row.status === USER_STATUS.ON ? USER_STATUS.OFF : USER_STATUS.ON,
+        });
+        fetchData(form.getFieldsValue());
+    };
+
+    const handleUserEdit = async (tele: string) => {
+
     }
 
 
@@ -134,8 +201,20 @@ export default function User() {
                 >
                     <Row gutter={19}>
                         <Col span={5}>
-                            <Form.Item name="item_name" label="电话号码" >
+                            <Form.Item name="item_name" label="账号" >
                                 <Input placeholder='请输入电话号码' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={5}>
+                            <Form.Item name="status" label="状态">
+                                <Select placeholder="请选择" allowClear>
+                                    <Option key={USER_STATUS.ON} value={USER_STATUS.ON}>
+                                        正常
+                                    </Option>
+                                    <Option key={USER_STATUS.OFF} value={USER_STATUS.OFF}>
+                                        禁用
+                                    </Option>
+                                </Select>
                             </Form.Item>
                         </Col>
                         <Col span={5}>

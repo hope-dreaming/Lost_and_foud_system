@@ -9,7 +9,7 @@ import {
     message,
     Select,
 } from 'antd';
-import { addLossItemInform } from '@/api/lossitem';
+import { addLossItemInform } from '@/api/index';
 import { LossitemLayoutType, LossitemType } from '@/types';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css'

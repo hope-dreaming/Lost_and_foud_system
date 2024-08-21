@@ -82,7 +82,7 @@ const FounditemLayout = () => {
 
         <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
           <Button type="primary" htmlType="submit">
-            Submit
+            创建
           </Button>
         </Form.Item>
       </Form>

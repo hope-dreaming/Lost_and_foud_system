@@ -10,7 +10,7 @@ export async function getFoundItemList(params?: LossitemQuery) {
     return res
 }
 
-export async function addLossItemInform(params: LossitemType) {
+export async function addFoundItemInform(params: LossitemType) {
     const url = `/api/addFounditemInform`;
     const res = await request.post(url, params);
     return res
