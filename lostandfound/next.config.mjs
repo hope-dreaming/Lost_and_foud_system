@@ -6,7 +6,8 @@ const nextConfig = {
             {
                 source: '/api/:path*',
                 destination:
-                    'https://apifoxmock.com/m1/4946855-4604544-default/:path*',
+                    // 'http://apifoxmock.com/m1/4946855-4604544-default/:path*',
+                    'http://localhost:3005/api/:path*'
             },
         ];
     }

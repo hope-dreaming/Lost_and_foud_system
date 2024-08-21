@@ -20,7 +20,7 @@ export interface UserQueryType {
     current?: number;
     pageSize?: number;
     name?: string;
-    all?: boolean;
+    tele?: string;
     status?: USER_STATUS;
 }
 

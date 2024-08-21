@@ -108,7 +108,6 @@ export default function User() {
         }
     ];
     const [total, setTotal] = useState(0);
-    const [data, setData] = useState([])
 
     const [pagination, setPagination] = useState({
         current: 1,
@@ -116,9 +115,9 @@ export default function User() {
         showSizeChanger: true,
     })
 
-    const handleSearchFinish = async (values: LossitemQuery) => {
+    const handleSearchFinish = async (values: UserQueryType) => {
         // console.log('Received values from form: ', values);
-        const res = getLossItemList(values)
+        const res = getUserList(values)
 
 
     };
@@ -130,14 +129,16 @@ export default function User() {
 
     const fetchData = useCallback(
         (search?: UserQueryType) => {
-            const { name, status } = search || {};
+            const { name, status, tele } = search || {};
             getUserList({
                 current: pagination.current as number,
                 pageSize: pagination.pageSize as number,
                 ...(name && { name }),
                 ...(status && { status }),
+                ...(tele && { tele }),
             }).then((res) => {
                 setList(res.data);
+                // console.log(res)
                 setTotal(res.total);
             });
         },
@@ -239,8 +240,9 @@ export default function User() {
                 </Form>
                 <div className={styles.table_item}>
                     <Table
-                        dataSource={data}
+                        dataSource={list}
                         columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
+                        rowKey="tele"
                         onChange={handleTableChange}
                         scroll={{ x: 1000 }}
                         sticky={{ offsetHeader: 0, offsetScroll: -1 }}

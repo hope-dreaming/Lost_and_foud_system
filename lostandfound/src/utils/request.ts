@@ -31,9 +31,9 @@ export const CreateAxiosInstance = (config?: AxiosRequestConfig): AxiosInstanceT
 
     instance.interceptors.response.use(
         function (response) {
-            const { status, data, message } = response.data as any
+            const { status, message } = response.data as any
             if (status === 200) {
-                return data
+                return response.data
             } else if (status == 401) {
                 return Router.push('/login')
             } else {

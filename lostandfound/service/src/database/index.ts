@@ -1,9 +1,16 @@
+import { nextTick } from 'process'
+import { sequelize } from './init'
 require('./models/user')
-require('./models/lossitem')
-require('./models/founditem')
-require('./models/returnitem')
+nextTick(() => {
+    require('./models/lossitem')
+    require('./models/founditem')
+    require('./models/returnitem')
+})
 
-const { sequelize } = require('./init')
+
+
+
+
 sequelize.sync().then(() => {
     console.log('所有模型同步成功')
 }).catch((error: any) => {

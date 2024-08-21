@@ -4,7 +4,7 @@ import { message } from "antd";
 
 // 查询所有用户信息列表
 
-const queryUserInfo = async (req, res) => {
+const queryUserList = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
         const userList = await User.findAll({
@@ -26,10 +26,54 @@ const queryUserInfo = async (req, res) => {
 }
 
 // 查询单个用户信息
-
+const queryUserInfo = async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    try {
+        const { userId } = req.body
+        const userInfo = User.findOne({
+            where: {
+                uid: userId,
+            }
+        })
+        if (!userInfo)
+            return res.send({ status: 401, message: '无此用户', data: null })
+        return res.send({
+            status: 200,
+            message: '查询成功',
+            data: userInfo,
+        })
+    }
+    catch (e) {
+        res.send({ status: 401, message: e.message, data: null })
+    }
+}
 
 // 添加单个用户信息
+const addUserInfo = async (req, res) => {
+    try {
+        const { tele, name, password, uno, sexy, role } = req.body
+        await User.create({
+            tele,
+            name,
+            password,
+            uno,
+            sexy,
+            role,
+            status: 1,
+        })
+    }
+    catch (e) {
+        res.send({ status: 401, message: e.message, data: null })
+    }
+}
 
 // 更新单个用户信息
 
 // 删除单个用户信息
+
+
+export {
+    queryUserList,
+    queryUserInfo,
+    addUserInfo
+}
