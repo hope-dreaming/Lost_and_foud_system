@@ -1,36 +1,29 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import { getLossItemList } from '@/api/lossitem';
 import { LossitemQuery } from '@/types';
 import Content from '@/components/Content';
+import { useCurrentUser } from '@/utils/hoos';
+import { getLossItemList } from '@/api';
 
 export default function Lossitem() {
 
     const [form] = Form.useForm();
+    const user = useCurrentUser();
 
-    // const user = useCurrentUser();
-    // const [list, setList] = useState<BookType[]>([]);
-    // const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
-    // const [total, setTotal] = useState(0);
-    // const [pagination, setPagination] = useState<TablePaginationConfig>({
-    //   current: 1,
-    //   pageSize: 20,
-    //   showSizeChanger: true,
-    // });
     const columns = [
         {
-            title: '失物名称',
+            title: '寻物名称',
             dataIndex: 'name',
             key: 'name',
             align: 'center',
         },
         {
-            title: '失物类型',
+            title: '寻物类型',
             dataIndex: 'type',
             key: 'type',
             align: 'center',
@@ -49,20 +42,20 @@ export default function Lossitem() {
         },
         {
             title: '丢失时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'date',
+            key: 'date',
             align: 'center',
         },
         {
             title: '丢失位置',
-            dataIndex: 'address',
-            key: 'address',
+            dataIndex: 'place',
+            key: 'place',
             align: 'center',
         },
         {
             title: '失主',
-            dataIndex: 'owner',
-            key: 'owner',
+            dataIndex: 'tele',
+            key: 'tele',
             align: 'center',
         },
         {
@@ -93,9 +86,8 @@ export default function Lossitem() {
     })
 
     const handleSearchFinish = async (values: LossitemQuery) => {
-        // console.log('Received values from form: ', values);
-        const res = getLossItemList(values)
-
+        console.log('Received values from form: ', values);
+        fetchData(values)
 
     };
 
@@ -103,134 +95,30 @@ export default function Lossitem() {
         // console.log(form)
         form.resetFields();
     }
-    // const dataSource = [
-    //     {
-    //         key: '1',
-    //         name: '胡彦斌',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '2',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '3',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    //     {
-    //         key: '4',
-    //         name: '胡彦祖',
-    //         type: '物品',
-    //         desc: '西湖区湖底公园1号',
-    //         owner: '张三',
-    //         time: '2020-08-13 19:45:06',
-    //         address: '西湖区湖底公园1号',
-    //     },
-    // ];
 
+    const fetchData = useCallback(
+        (search?: LossitemQuery) => {
+            const { item_name, item_type } = search || {};
+            getLossItemList({
+                current: pagination.current as number,
+                pageSize: pagination.pageSize as number,
+                item_name,
+                item_type,
+                role: user?.role,
+                userId: user?.uid,
+            }).then((res) => {
+                setData(res.data);
+                console.log(res)
+                setTotal(res.total);
+            });
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [pagination, user?.role]
+    );
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getLossItemList()
-                // console.log(res)
-                setData(data)
-                // console.log(res)
-            }
-            catch (e) {
-                console.error(e)
-            }
-        }
-        fetchData()
-        // setPagination({ ...pagination, total: dataSource.length })
-
-    }, [])
+        fetchData();
+    }, [fetchData, pagination]);
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         setPagination({
@@ -239,7 +127,6 @@ export default function Lossitem() {
             showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
         })
     }
-
 
 
     return (

@@ -1,6 +1,10 @@
 export interface LossitemQuery {
-    name?: string;
-    type?: string;
+    current?: number;
+    pageSize?: number;
+    item_name?: string;
+    item_type?: string;
+    role?: USER_ROLE;
+    userId?: string;
 }
 
 export interface LossitemType {

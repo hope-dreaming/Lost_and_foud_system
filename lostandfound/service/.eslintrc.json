@@ -1,8 +1,17 @@
 {
   "root": true,
-  "ignorePatterns": ["build"],
-  "extends": ["@antfu"],
+  "ignorePatterns": [
+    "build"
+  ],
+  "extends": [
+    "@antfu",
+    "plugin:@typescript-eslint/recommended",
+  ],
   "rules": {
-    "@typescript-eslint/no-var-requires": 0
+    "@typescript-eslint/no-var-requires": 0,
+    "indent": [
+      "error",
+      4
+    ]
   }
 }

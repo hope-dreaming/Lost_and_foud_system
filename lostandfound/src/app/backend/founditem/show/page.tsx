@@ -1,27 +1,20 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
+import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import { getLossItemList } from '@/api/lossitem';
 import { LossitemQuery } from '@/types';
 import Content from '@/components/Content';
-import { useRouter } from 'next/navigation';
-export default function FounditemShow() {
+import { useCurrentUser } from '@/utils/hoos';
+import { getLossItemList } from '@/api';
+
+export default function Lossitem() {
 
     const [form] = Form.useForm();
+    const user = useCurrentUser();
 
-    const router = useRouter()
-    // const user = useCurrentUser();
-    // const [list, setList] = useState<BookType[]>([]);
-    // const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
-    // const [total, setTotal] = useState(0);
-    // const [pagination, setPagination] = useState<TablePaginationConfig>({
-    //   current: 1,
-    //   pageSize: 20,
-    //   showSizeChanger: true,
-    // });
     const columns = [
         {
             title: '物品名称',
@@ -49,21 +42,26 @@ export default function FounditemShow() {
         },
         {
             title: '拾取时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'date',
+            key: 'date',
             align: 'center',
         },
         {
             title: '拾取位置',
-            dataIndex: 'address',
-            key: 'address',
+            dataIndex: 'place',
+            key: 'place',
             align: 'center',
         },
         {
-            title: '拾取人',
-            dataIndex: 'owner',
-            key: 'owner',
+            title: '是否被领取',
+            dataIndex: 'isreturn',
+            key: 'isreturn',
             align: 'center',
+            render: (text: number) => text === 1 ? (
+                <Tag color="green">已被领取</Tag>
+            ) : (
+                <Tag color="red">未被领取</Tag>
+            ),
         },
         {
             title: '操作',
@@ -93,9 +91,8 @@ export default function FounditemShow() {
     })
 
     const handleSearchFinish = async (values: LossitemQuery) => {
-        // console.log('Received values from form: ', values);
-        const res = getLossItemList(values)
-
+        console.log('Received values from form: ', values);
+        fetchData(values)
 
     };
 
@@ -104,23 +101,29 @@ export default function FounditemShow() {
         form.resetFields();
     }
 
+    const fetchData = useCallback(
+        (search?: LossitemQuery) => {
+            const { item_name, item_type } = search || {};
+            getLossItemList({
+                current: pagination.current as number,
+                pageSize: pagination.pageSize as number,
+                item_name,
+                item_type,
+                role: user?.role,
+                userId: user?.uid,
+            }).then((res) => {
+                setData(res.data);
+                console.log(res)
+                setTotal(res.total);
+            });
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [pagination, user?.role]
+    );
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getLossItemList()
-                // console.log(res)
-                setData(data)
-                // console.log(res)
-            }
-            catch (e) {
-                console.error(e)
-            }
-        }
-        fetchData()
-        // setPagination({ ...pagination, total: dataSource.length })
-
-    }, [])
+        fetchData();
+    }, [fetchData, pagination]);
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         setPagination({
@@ -131,22 +134,10 @@ export default function FounditemShow() {
     }
 
 
-
     return (
         <>
             <Content
-                title='个人寻物信息'
-                operation={
-                    <Button
-                        type='primary'
-                        onClick={() => {
-                            router.push('/founditem/add')
-                        }
-                        }>
-                        添加
-                    </Button>
-
-                }
+                title="个人拾物信息"
             >
                 <Form
                     form={form}
@@ -161,12 +152,12 @@ export default function FounditemShow() {
                 >
                     <Row gutter={19}>
                         <Col span={5}>
-                            <Form.Item name="item_name" label="失物名称" >
+                            <Form.Item name="item_name" label="物品名称" >
                                 <Input placeholder='请输入物品名称' />
                             </Form.Item>
                         </Col>
                         <Col span={5}>
-                            <Form.Item name="item_type" label="失物类型" >
+                            <Form.Item name="item_type" label="物品类型" >
                                 <Input placeholder='请输入物品类型' />
                             </Form.Item>
                         </Col>
@@ -188,14 +179,14 @@ export default function FounditemShow() {
                 <div className={styles.table_item}>
                     <Table
                         dataSource={data}
-                        sticky={{ offsetHeader: 0, offsetScroll: -1 }}
                         columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
                         onChange={handleTableChange}
                         scroll={{ x: 1000 }}
+                        sticky={{ offsetHeader: 0, offsetScroll: -1 }}
                         pagination={{
                             ...pagination,
                             total: total,
-                            showTotal: () => `共${total}条数据`
+                            showTotal: (total) => `共${total}条数据`
                         }}
                     />;
                 </div>

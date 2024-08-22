@@ -1,37 +1,27 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Col, Flex, Form, Input, message, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import { getLossItemList } from '@/api/lossitem';
-import { LossitemQuery } from '@/types';
 import Content from '@/components/Content';
-import { deleteFounditem, getFoundItemList } from '@/api/founditem';
+import { getFoundItemList } from '@/api/founditem';
 import { useRouter } from 'next/navigation';
 import { FounditemQuery } from '@/types/founditem'
+import { useCurrentUser } from '@/utils/hoos';
 
 
 export default function Lossitem() {
 
-    const [form] = Form.useForm();
+    const [form] = Form.useForm()
     const router = useRouter()
-
-    // const user = useCurrentUser();
-    // const [list, setList] = useState<BookType[]>([]);
-    // const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
-    // const [total, setTotal] = useState(0);
-    // const [pagination, setPagination] = useState<TablePaginationConfig>({
-    //   current: 1,
-    //   pageSize: 20,
-    //   showSizeChanger: true,
-    // });
+    const user = useCurrentUser()
     const handleFoundEdit = () => {
         router.push("/founditem/edit/id")
     }
     const handleFoundDelete = async (id: string) => {
-        await deleteFounditem(id)
+        // await deleteFounditem(id)
         message.success('删除成功')
     }
 
@@ -44,37 +34,40 @@ export default function Lossitem() {
         showSizeChanger: true,
     })
 
-    // 搜索
+
     const handleSearchFinish = async (values: FounditemQuery) => {
         // console.log('Received values from form: ', values);
-        const res = getLossItemList(values)
-
+        fetchData(values)
 
     };
-    // 搜索框重置
+
     const handleSearchReset = () => {
         // console.log(form)
         form.resetFields();
     }
-    // 获取数据
-    async function fetchData(search?: FounditemQuery) {
-        try {
-            const data = await getFoundItemList()
-            // console.log(res)
-            setData(data)
-            // console.log(res)
-        }
-        catch (e) {
-            console.error(e)
-        }
-    }
+
+    const fetchData = useCallback(
+        (search?: FounditemQuery) => {
+            const { item_name, item_type } = search || {};
+            getFoundItemList({
+                current: pagination.current as number,
+                pageSize: pagination.pageSize as number,
+                item_name,
+                item_type,
+                userId: user?.uid
+            }).then((res) => {
+                setData(res.data);
+                // console.log(res)
+                setTotal(res.total);
+            });
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [pagination]
+    );
 
     useEffect(() => {
-
-        fetchData()
-        // setPagination({ ...pagination, total: dataSource.length })
-
-    }, [])
+        fetchData();
+    }, [fetchData, pagination]);
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         setPagination({
@@ -83,6 +76,7 @@ export default function Lossitem() {
             showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
         })
     }
+
 
     const columns = [
         {
@@ -111,20 +105,20 @@ export default function Lossitem() {
         },
         {
             title: '拾取时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'date',
+            key: 'date',
             align: 'center',
         },
         {
             title: '拾取位置',
-            dataIndex: 'address',
-            key: 'address',
+            dataIndex: 'place',
+            key: 'place',
             align: 'center',
         },
         {
             title: '拾取人',
-            dataIndex: 'owner',
-            key: 'owner',
+            dataIndex: 'tele',
+            key: 'tele',
             align: 'center',
         },
         {

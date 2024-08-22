@@ -117,27 +117,7 @@ export default function RootLayout({
     router.push(e.key);
   };
 
-  // const USER_ITEMS: MenuProps["items"] = [
-  //   {
-  //     key: "1",
-  //     // label: <Link href={`/user/edit/${user?._id}`}>个人中心</Link>,
-  //   },
-  //   {
-  //     key: "2",
-  //     label: (
-  //       <span
-  //       // onClick={async () => {
-  //       //   await setLogout();
-  //       //   localStorage.removeItem("user");
-  //       //   message.success("退出成功");
-  //       //   router.push("/login");
-  //       // }}
-  //       >
-  //         退出
-  //       </span>
-  //     ),
-  //   },
-  // ];
+
 
   const USER_ITEMS: MenuProps["items"] = [
     {
@@ -181,7 +161,7 @@ export default function RootLayout({
             </Dropdown>
           </span>
         </Header>
-        {/* <Content> */}
+
         {/* <Breadcrumb style={{ margin: '16px 0' }}>
               <Breadcrumb.Item>Home</Breadcrumb.Item>
               <Breadcrumb.Item>List</Breadcrumb.Item>
@@ -203,7 +183,7 @@ export default function RootLayout({
             {children}
           </Content>
         </Layout>
-        {/* </Content> */}
+
       </Layout>
     </div>
 
