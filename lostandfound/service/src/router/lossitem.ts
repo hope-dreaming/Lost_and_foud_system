@@ -43,7 +43,7 @@ const queryLossItemList = async (req, res) => {
 }
 
 // 查询个人寻物列表
-const queryLosttItemInfo = async (req, res) => {
+const queryLossItemInfo = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
         const { item_name, item_type, userId } = req.body
@@ -70,7 +70,30 @@ const queryLosttItemInfo = async (req, res) => {
     }
 }
 
+// 添加寻物信息
+const addLossItem = (req, res) => {
+
+}
+
+// 修改寻物信息
+const updateLossItem = (req, res) => {
+
+
+}
+
+// 删除寻物信息
+const deleteLossItem = (req, res) => {
+}
+
+// 查询寻物类型信息
+const queryLossItemType = (req, res) => {
+}
+
 export {
     queryLossItemList,
-    queryLosttItemInfo,
+    queryLossItemInfo,
+    addLossItem,
+    updateLossItem,
+    deleteLossItem,
+    queryLossItemType
 }

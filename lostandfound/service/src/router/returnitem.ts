@@ -3,7 +3,7 @@ import { Op } from 'sequelize'
 import { Returnitem } from 'src/database/models/returnitem'
 import { User } from 'src/database/models/user'
 
-// 查找待办事务
+// 查找记录列表
 const queryReturnitemList = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
@@ -46,9 +46,22 @@ const queryReturnitemList = async (req, res) => {
     }
 }
 
-// 查找完成事务
+// 增加记录
+const addReturnitem = async (req, res) => {
+
+}
+
+// 修改记录
+const updateReturnitem = async (req, res) => {
+}
+
+// 删除记录
+const deleteReturnitem = async (req, res) => {
+}
 
 export {
     queryReturnitemList,
-
+    addReturnitem,
+    updateReturnitem,
+    deleteReturnitem,
 }

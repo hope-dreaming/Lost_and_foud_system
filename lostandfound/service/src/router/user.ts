@@ -3,7 +3,6 @@ import { User } from '../database/models/user'
 import { message } from "antd";
 
 // 查询所有用户信息列表
-
 const queryUserList = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
@@ -73,12 +72,20 @@ const addUserInfo = async (req, res) => {
 }
 
 // 更新单个用户信息
+const updateUserInfo = async (req, res) => {
+
+}
 
 // 删除单个用户信息
+const deleteUserInfo = async (req, res) => {
+
+}
 
 
 export {
     queryUserList,
     queryUserInfo,
-    addUserInfo
+    addUserInfo,
+    updateUserInfo,
+    deleteUserInfo,
 }

@@ -75,7 +75,32 @@ const queryFoundItemInfo = async (req, res) => {
     }
 }
 
+
+// 增加失物信息
+const addFoundItem = async (req, res) => {
+
+}
+
+// 更新失物信息
+const updateFoundItem = async (req, res) => {
+
+}
+
+// 删除失物信息
+const deleteFoundItem = async (req, res) => {
+
+}
+
+// 获取所有失物的类型
+const queryFountitemType = async (req, res) => {
+
+}
+
 export {
     queryFoundItemList,
-    queryFoundItemInfo
+    queryFoundItemInfo,
+    addFoundItem,
+    updateFoundItem,
+    deleteFoundItem,
+    queryFountitemType,
 }
