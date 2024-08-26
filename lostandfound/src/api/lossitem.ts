@@ -19,7 +19,25 @@ export async function getLosttItemInfo(params?: LossitemQuery) {
 }
 
 export async function addLossItemInform(params: LossitemType) {
-    const url = `/api/addLossitemInform`;
+    const url = `/api/addLossItem`;
     const res = await request.post(url, params);
+    return res
+}
+
+export async function deleteLossItem(params: number) {
+    const url = "api/deleteLossItem"
+    const res = await request.post(url, params);
+    return res
+}
+
+export async function updateLossItem(params: LossitemType) {
+    const url = "api/updateLossItem"
+    const res = await request.post(url, params);
+    return res
+}
+
+export async function getLossItemType(params: LossitemQuery) {
+    const url = "api/queryLossItemType"
+    const res = await request.get(url);
     return res
 }

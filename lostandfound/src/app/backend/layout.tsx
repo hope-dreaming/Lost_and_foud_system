@@ -9,10 +9,12 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { setLogout } from '@/api';
+import { useCurrentUser } from '@/utils/hoos';
+import { USER_ROLE } from '@/constants';
 
 const { Header, Content, Footer, Sider } = Layout;
 
-const ITEMS = [
+const START_ITEMS = [
   {
     label: "寻物启事",
     key: "lossitem",
@@ -76,25 +78,10 @@ const ITEMS = [
       }
     ]
   },
-  {
-    label: "用户管理",
-    key: "user",
-    // icon: <UserOutlined />,
-    // role: USER_ROLE.ADMIN,
-    children: [
-      {
-        label: "用户列表",
-        key: "/backend/user",
-        // role: USER_ROLE.ADMIN,
-      },
-      {
-        label: "用户添加",
-        key: "/backend/user/add",
-        // role: USER_ROLE.ADMIN,
-      },
-    ],
-  },
+
 ]
+
+
 
 export default function RootLayout({
   children,
@@ -107,7 +94,27 @@ export default function RootLayout({
   } = theme.useToken();
 
   const router = useRouter();
-  // const user = useCurrentUser();
+  const user = useCurrentUser();
+
+  const ITEMS = user?.info.role === USER_ROLE.USER ? START_ITEMS : [...START_ITEMS,
+  {
+    label: "用户管理",
+    key: "user",
+    // icon: <UserOutlined />,
+    role: USER_ROLE.ADMIN,
+    children: [
+      {
+        label: "用户列表",
+        key: "/backend/user",
+        role: USER_ROLE.ADMIN,
+      },
+      {
+        label: "用户添加",
+        key: "/backend/user/add",
+        role: USER_ROLE.ADMIN,
+      },
+    ],
+  },];
 
   const activeMenu = usePathname();
   const defaultOpenKeys = [activeMenu.split("/")[1]];
@@ -130,7 +137,7 @@ export default function RootLayout({
         <span
           onClick={async () => {
             // await setLogout();
-            // localStorage.removeItem("user");
+            localStorage.removeItem("user");
             message.success("退出成功");
             router.push("/login");
           }}
@@ -153,8 +160,8 @@ export default function RootLayout({
             <Dropdown menu={{ items: USER_ITEMS }} placement="bottom">
               <span onClick={(e) => e.preventDefault()}>
                 <Space>
-                  {/* {user?.nickName} */}
-                  用户名
+                  {user?.info?.name ? user.info.name : user?.info.tele}
+                  {/* 用户名 */}
                   <DownOutlined />
                 </Space>
               </span>

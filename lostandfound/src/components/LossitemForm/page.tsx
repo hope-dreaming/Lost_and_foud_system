@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css'
 import Content from '../Content';
 import dayjs from 'dayjs';
+import { useCurrentUser } from '@/utils/hoos';
 
 
 const Option = Select.Option;
@@ -35,20 +36,15 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
 
     const router = useRouter();
     const [form] = Form.useForm()
-
-    const user: any = {
-        uid: "1234567890",
-        name: "张三",
-        phone: "13800000000",
-    }
+    const user = useCurrentUser()
     const handleFinishform = async (values: LossitemType) => {
-        console.log(values);
-        if (values.time) {
-            values.time = dayjs(values.time).format('YYYY-MM-DD HH:mm:ss')
+        // console.log(values);
+        if (values.date) {
+            values.date = dayjs(values.date).format('YYYY-MM-DD HH:mm:ss')
         }
         await addLossItemInform(values)
         message.success("添加成功");
-        router.push('/lossitem/show')
+        router.push('/backend/lossitem/show')
     }
 
 
@@ -83,7 +79,7 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
 
                     <Form.Item
                         label="丢失时间"
-                        name="time"
+                        name="date"
                         rules={[{ required: true, message: '请输入丢失时间!' }]}
                     >
                         <DatePicker />
@@ -91,7 +87,7 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
 
                     <Form.Item
                         label="丢失地点"
-                        name="address"
+                        name="place"
                         rules={[{ required: true, message: '请输入丢失地点' }]}
                     >
                         <Input />
@@ -112,8 +108,8 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
                         rules={[{ required: true, message: '请输入失主账号' }]}
                     >
                         <Select allowClear>
-                            <Option key={user.uid} value={user.uid}>
-                                {user.uid}
+                            <Option key={user?.info?.uid} value={user?.info?.uid}>
+                                {user?.info?.tele}
                             </Option>
                         </Select>
                     </Form.Item>
@@ -124,7 +120,7 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
                             htmlType="submit"
                             className={styles.btn}
                         >
-                            创建
+                            添加
                         </Button>
                     </Form.Item>
                 </Form>

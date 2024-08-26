@@ -71,22 +71,116 @@ const queryLossItemInfo = async (req, res) => {
 }
 
 // 添加寻物信息
-const addLossItem = (req, res) => {
-
+const addLossItem = async (req, res) => {
+    try {
+        const { name, type, date, place, desc, uid } = req.body
+        const lossitem = await Lossitem.create({
+            name,
+            type,
+            date,
+            place,
+            desc,
+            uid,
+        })
+        if (!lossitem)
+            return res.send({ status: 401, msg: '添加寻物信息失败' })
+        return res.send({
+            status: 200,
+            msg: '添加成功',
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '添加寻物信息失败' })
+    }
 }
 
 // 修改寻物信息
-const updateLossItem = (req, res) => {
-
+const updateLossItem = async (req, res) => {
+    try {
+        const { name, type, date, place, desc, lid } = req.body
+        const lossitem = await Lossitem.update({
+            name,
+            type,
+            date,
+            place,
+            desc,
+        },
+            {
+                where: {
+                    lid,
+                },
+            }
+        )
+        if (!lossitem)
+            return res.send({ status: 401, msg: '修改寻物信息失败' })
+        return res.send({
+            status: 200,
+            msg: '修改成功',
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '修改寻物信息失败' })
+    }
 
 }
 
 // 删除寻物信息
-const deleteLossItem = (req, res) => {
+const deleteLossItem = async (req, res) => {
+    try {
+        const { lid } = req.body
+        await Lossitem.destroy({
+            where: {
+                lid,
+            },
+        })
+
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '添加失物信息失败' })
+    }
 }
 
 // 查询寻物类型信息
-const queryLossItemType = (req, res) => {
+const queryLossItemType = async (req, res) => {
+    try {
+        const lossitemType = await Lossitem.findAll({
+            attributes: ['type'],
+        })
+        if (!lossitemType)
+            return res.send({ status: 401, msg: '无失物类型' })
+
+        const uniqueTypes = new Set(lossitemType.map(item => item.type));
+
+        // 将Set转换为数组，以便在响应中发送
+        const data = Array.from(uniqueTypes);
+
+        return res.send({
+            status: 200,
+            msg: '查询成功',
+            data: data
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '查询失败' })
+    }
+}
+
+// 修改寻物信息状态
+const editLossItemStatus = async (req, res) => {
+    try {
+        const { lid, status } = req.body
+        await Lossitem.update({
+            status,
+        },
+            {
+                where: {
+                    lid,
+                },
+            })
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '修改失物信息状态失败' })
+    }
 }
 
 export {

@@ -4,17 +4,26 @@ import request from "@/utils/request";
 import { ReturnitemQueryType } from "@/types";
 
 export async function getReturnItemList(params?: ReturnitemQueryType) {
-    // https://apifoxmock.com/m1/4946855-4604544-default/queryLossitem?name=xxx&type=xxx
     const url = "/api/queryReturnItemList";
     const res = await request.post(url, params);
-
     return res
 }
 
 
+export async function addReturnitem(params: any) {
+    const url = `/api/addReturnitem`;
+    const res = await request.post(url, params);
+    return res
+}
 
-export async function addReturnItemInform(params: any) {
-    const url = `/api/addReturnItemInform`;
+export async function updateReturnitem(params: any) {
+    const url = `/api/updateReturnitem`;
+    const res = await request.post(url, params);
+    return res
+}
+
+export async function deleteReturnitem(params: any) {
+    const url = `/api/deleteReturnitem`;
     const res = await request.post(url, params);
     return res
 }

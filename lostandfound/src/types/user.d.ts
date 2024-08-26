@@ -1,6 +1,6 @@
 import { USER_ROLE, USER_SEXY, USER_STATUS } from "./../constants/index";
 
-export interface UserType {
+export interface UserInfoType {
     tele: string;
     name: string;
     role: USER_ROLE;
@@ -8,11 +8,17 @@ export interface UserType {
     sexy: USER_SEXY;
     uid?: string;
     password: string;
+    createdAt?: string;
+    updatedAt?: string;
 
+}
+export interface UserType {
+    info: UserInfoType;
+    token: string;
 }
 
 export interface UserLoginType {
-    name: string;
+    tele: string;
     password: string;
 }
 

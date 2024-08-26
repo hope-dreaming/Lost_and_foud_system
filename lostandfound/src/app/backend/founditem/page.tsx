@@ -1,15 +1,17 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, message, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
 import Content from '@/components/Content';
-import { getFoundItemList } from '@/api/founditem';
+import { deleteFoundItem, getFoundItemList } from '@/api/founditem';
 import { useRouter } from 'next/navigation';
 import { FounditemQuery } from '@/types/founditem'
 import { useCurrentUser } from '@/utils/hoos';
+import { USER_ROLE } from '@/constants';
+import { addReturnitem } from '@/api';
 
 
 export default function Lossitem() {
@@ -17,14 +19,6 @@ export default function Lossitem() {
     const [form] = Form.useForm()
     const router = useRouter()
     const user = useCurrentUser()
-    const handleFoundEdit = () => {
-        router.push("/founditem/edit/id")
-    }
-    const handleFoundDelete = async (id: string) => {
-        // await deleteFounditem(id)
-        message.success('删除成功')
-    }
-
     const [total, setTotal] = useState(0);
     const [data, setData] = useState([])
 
@@ -33,52 +27,7 @@ export default function Lossitem() {
         pageSize: 20,
         showSizeChanger: true,
     })
-
-
-    const handleSearchFinish = async (values: FounditemQuery) => {
-        // console.log('Received values from form: ', values);
-        fetchData(values)
-
-    };
-
-    const handleSearchReset = () => {
-        // console.log(form)
-        form.resetFields();
-    }
-
-    const fetchData = useCallback(
-        (search?: FounditemQuery) => {
-            const { item_name, item_type } = search || {};
-            getFoundItemList({
-                current: pagination.current as number,
-                pageSize: pagination.pageSize as number,
-                item_name,
-                item_type,
-                userId: user?.uid
-            }).then((res) => {
-                setData(res.data);
-                // console.log(res)
-                setTotal(res.total);
-            });
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [pagination]
-    );
-
-    useEffect(() => {
-        fetchData();
-    }, [fetchData, pagination]);
-
-    const handleTableChange = (pagination: TablePaginationConfig) => {
-        setPagination({
-            current: pagination.current ?? 1,
-            pageSize: pagination.pageSize ?? 15,
-            showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
-        })
-    }
-
-
-    const columns = [
+    const START_columns = [
         {
             title: '物品名称',
             dataIndex: 'name',
@@ -121,6 +70,11 @@ export default function Lossitem() {
             key: 'tele',
             align: 'center',
         },
+
+    ];
+
+    const columns = user?.info?.role === USER_ROLE.ADMIN ? [
+        ...START_columns,
         {
             title: '操作',
             dataIndex: 'action',
@@ -130,15 +84,107 @@ export default function Lossitem() {
                 <Flex>
                     <Space size="middle">
 
-                        <Button type="primary" ghost onClick={() => { handleFoundEdit }}>编辑</Button>
-                        <Button type="primary" danger ghost onClick={() => { handleFoundDelete }}>删除</Button>
+                        <Button type="primary" ghost onClick={() => { router.push(`/backend/founditem/edit/${record.fid}`) }}>编辑</Button>
+                        <Button type="primary" danger ghost onClick={() => { handleDelete(record.fid as number) }}>删除</Button>
 
                     </Space>
                 </Flex>
             ),
 
         }
-    ];
+
+    ] : [
+        ...START_columns,
+        {
+            title: '操作',
+            dataIndex: 'action',
+            key: 'action',
+            align: 'center',
+            render: (_: any, record: any) => (
+                <Flex>
+                    <Space size="middle">
+                        <Button type="primary" ghost onClick={() => { handleApply(record.fid as number) }}>申请领取</Button>
+                    </Space>
+                </Flex>
+            ),
+        },
+    ]
+
+    const handleSearchReset = () => {
+        // console.log(form)
+        form.resetFields();
+    }
+    const handleTableChange = (pagination: TablePaginationConfig) => {
+        setPagination({
+            current: pagination.current ?? 1,
+            pageSize: pagination.pageSize ?? 15,
+            showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
+        })
+    }
+
+    const handleSearchFinish = async (values: FounditemQuery) => {
+        // console.log('Received values from form: ', values);
+        fetchData(values)
+
+    };
+
+    const fetchData = useCallback(
+        (search?: FounditemQuery) => {
+            const { item_name, item_type } = search || {};
+            getFoundItemList({
+                current: pagination.current as number,
+                pageSize: pagination.pageSize as number,
+                item_name,
+                item_type,
+                userId: user?.info?.uid
+            }).then((res) => {
+                setData(res.data);
+                // console.log(res)
+                setTotal(res.total);
+            });
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [pagination]
+    );
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData, pagination]);
+
+    const handleDelete = (id: number) => {
+        Modal.confirm({
+            title: "确认删除？",
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                try {
+                    await deleteFoundItem(id);
+                    message.success("删除成功");
+                    fetchData(form.getFieldsValue());
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        });
+    };
+
+    const handleApply = (id: number) => {
+        Modal.confirm({
+            title: "确认申请领取？",
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                try {
+                    await addReturnitem(id);
+                    message.success("申请成功");
+                    fetchData(form.getFieldsValue());
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        });
+    };
+
 
 
     return (

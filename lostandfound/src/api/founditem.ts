@@ -18,14 +18,31 @@ export async function getFoundItemInfo(params?: FounditemQuery) {
     return res
 }
 
-// export async function addFoundItemInform(params: LossitemType) {
-//     const url = `/api/addFounditemInform`;
-//     const res = await request.post(url, params);
-//     return res
-// }
+export async function addFoundItem(params?: any) {
+    const url = "/api/addFoundItem";
+    const res = await request.post(url, params);
 
-// export async function deleteFounditem(id: string) {
-//     const url = `/api/deleteFounditem?id=${id}`;
-//     const res = await request.get(url);
-//     return res
-// }
+    return res
+}
+
+export async function updateFoundItem(params?: any) {
+    const url = "/api/updateFoundItem";
+    const res = await request.post(url, params);
+
+    return res
+}
+
+export async function deleteFoundItem(params?: any) {
+    const url = "/api/deleteFoundItem";
+    const res = await request.post(url, params);
+
+    return res
+}
+
+export async function getFountitemType(params?: any) {
+    const url = "/api/queryFountitemType";
+    const res = await request.get(url);
+
+    return res
+}
+

@@ -1,21 +1,24 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
 import styles from './page.module.css'
-import axios from 'axios';
+import { USER_ROLE } from '@/constants';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import { LossitemQuery } from '@/types';
+import { LossitemQuery, LossitemType } from '@/types';
 import Content from '@/components/Content';
 import { useCurrentUser } from '@/utils/hoos';
-import { getLossItemList } from '@/api';
+import { deleteLossItem, getLossItemList } from '@/api';
+import { USER_STATUS } from '@/constants';
+import { useRouter } from 'next/navigation';
 
 export default function Lossitem() {
 
     const [form] = Form.useForm();
     const user = useCurrentUser();
+    const router = useRouter();
 
-    const columns = [
+    const START_columns = [
         {
             title: '寻物名称',
             dataIndex: 'name',
@@ -58,24 +61,29 @@ export default function Lossitem() {
             key: 'tele',
             align: 'center',
         },
+
+    ];
+    const columns = user?.info?.role === USER_ROLE.USER ? START_columns : [
+        ...START_columns,
         {
             title: '操作',
             dataIndex: 'action',
             key: 'action',
             align: 'center',
-            render: (_: any, record: any) => (
+            render: (_: any, record: LossitemType) => (
                 <Flex>
                     <Space size="middle">
 
-                        <Button type="primary" ghost onClick={() => { }}>编辑</Button>
-                        <Button type="primary" danger ghost onClick={() => { }}>删除</Button>
+                        <Button type="primary" ghost onClick={() => { router.push(`/backend/lossitem/edit/${record.lid}`) }}>编辑</Button>
+                        <Button type="primary" danger ghost onClick={() => { handleDelete(record.lid as number) }}>删除</Button>
 
                     </Space>
                 </Flex>
             ),
 
         }
-    ];
+
+    ]
     const [total, setTotal] = useState(0);
     const [data, setData] = useState([])
 
@@ -104,8 +112,8 @@ export default function Lossitem() {
                 pageSize: pagination.pageSize as number,
                 item_name,
                 item_type,
-                role: user?.role,
-                userId: user?.uid,
+                role: user?.info?.role,
+                userId: user?.info?.uid,
             }).then((res) => {
                 setData(res.data);
                 console.log(res)
@@ -113,7 +121,7 @@ export default function Lossitem() {
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [pagination, user?.role]
+        [pagination, user?.info?.role]
     );
 
     useEffect(() => {
@@ -127,6 +135,23 @@ export default function Lossitem() {
             showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
         })
     }
+
+    const handleDelete = (id: number) => {
+        Modal.confirm({
+            title: "确认删除？",
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                try {
+                    await deleteLossItem(id);
+                    message.success("删除成功");
+                    fetchData(form.getFieldsValue());
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        });
+    };
 
 
     return (

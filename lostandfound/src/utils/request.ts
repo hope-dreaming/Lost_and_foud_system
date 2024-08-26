@@ -1,6 +1,10 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+'use client'
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
-import Router from "next/router"
 import { message as Antdmessage } from "antd"
+// import { useRouter } from "next/navigation"
+
+
 
 interface AxiosInstanceType extends AxiosInstance {
     get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
@@ -19,9 +23,15 @@ export const CreateAxiosInstance = (config?: AxiosRequestConfig): AxiosInstanceT
         timeout: 5000,
         ...config
     })
+    // const router = useRouter()
 
     instance.interceptors.request.use(
+
         function (config) {
+            const userStorage = localStorage.getItem('user')
+            // console.log(userStorage)
+            const token = userStorage ? JSON.parse(userStorage).token : ''
+            config.headers['Authorization'] = 'Bearer ' + token
             return config
         },
         function (error) {
@@ -35,7 +45,7 @@ export const CreateAxiosInstance = (config?: AxiosRequestConfig): AxiosInstanceT
             if (status === 200) {
                 return response.data
             } else if (status == 401) {
-                return Router.push('/login')
+                return window.location.href = '/login'
             } else {
                 Antdmessage.error(message || '请求失败')
             }
@@ -43,7 +53,7 @@ export const CreateAxiosInstance = (config?: AxiosRequestConfig): AxiosInstanceT
         },
         function (error) {
             if (error.response && error.response.status === 401) {
-                return Router.push('/login')
+                return window.location.href = '/login'
             }
             Antdmessage.error(error?.response?.data?.message || '请求失败2')
             return Promise.reject(error)

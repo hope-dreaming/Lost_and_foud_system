@@ -65,6 +65,7 @@ const addUserInfo = async (req, res) => {
             role,
             status: 1,
         })
+        res.send({ status: 200, message: '添加成功', data: null })
     }
     catch (e) {
         res.send({ status: 401, message: e.message, data: null })
@@ -73,10 +74,31 @@ const addUserInfo = async (req, res) => {
 
 // 更新单个用户信息
 const updateUserInfo = async (req, res) => {
+    try {
+        const { tele, name, password, uno, sexy, role, uid } = req.body
+        await User.update({
+            tele,
+            name,
+            password,
+            uno,
+            sexy,
+            role,
+        },
+            {
+                where: {
+                    uid,
+                }
+            })
+        res.send({ status: 200, message: '更新成功', data: null })
+    }
+    catch (e) {
+        res.send({ status: 401, message: e.message, data: null })
+    }
 
 }
 
 // 删除单个用户信息
+// 删除单个信息的同时应删除其所有寻物信息，失物招领信息，物品领取审核记录
 const deleteUserInfo = async (req, res) => {
 
 }

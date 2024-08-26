@@ -73,7 +73,7 @@ const FounditemLayout = () => {
 
         <Form.Item
           label="拾取人"
-          name="user"
+          name="tele"
           rules={[{ required: true, message: 'Please input!' }]}
         >
           <Input />

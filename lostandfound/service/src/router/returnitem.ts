@@ -3,7 +3,7 @@ import { Op } from 'sequelize'
 import { Returnitem } from 'src/database/models/returnitem'
 import { User } from 'src/database/models/user'
 
-// 查找记录列表
+// 查找申请列表
 const queryReturnitemList = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
@@ -46,17 +46,69 @@ const queryReturnitemList = async (req, res) => {
     }
 }
 
-// 增加记录
+// 增加申请
 const addReturnitem = async (req, res) => {
+    try {
+        const { uid, uaid, date, fid } = req.body
+        const returnitem = await Returnitem.create({
+            uid,
+            uaid,
+            date,
+            fid,
+        })
+        if (!returnitem)
+            res.send({ status: 401, message: '申请失败', data: null })
 
+        res.send({
+            status: 200,
+            message: '申请成功',
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, message: e.message, data: null })
+    }
 }
 
-// 修改记录
+// 修改申请
+// 审核申请的同时，如果审核通过，则审核物品为归还状态isfound=1,否则不做修改
 const updateReturnitem = async (req, res) => {
+    try {
+        const { isok, rid } = req.body
+        const returnitem = await Returnitem.update({
+            isok,
+        }, {
+            where: { rid },
+        })
+        if (!returnitem)
+            res.send({ status: 401, message: '审核失败', data: null })
+        res.send({
+            status: 200,
+            message: '审核成功',
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, message: e.message, data: null })
+    }
 }
 
 // 删除记录
 const deleteReturnitem = async (req, res) => {
+    try {
+        const { rid } = req.body
+        const returnitem = await Returnitem.destroy({
+            where: { rid },
+        })
+        if (!returnitem)
+            res.send({ status: 401, message: '删除失败', data: null })
+
+        res.send({
+            status: 200,
+            message: '删除成功',
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, message: e.message, data: null })
+    }
 }
 
 export {

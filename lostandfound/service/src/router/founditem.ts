@@ -78,23 +78,117 @@ const queryFoundItemInfo = async (req, res) => {
 
 // 增加失物信息
 const addFoundItem = async (req, res) => {
+    try {
+        const { name, type, date, place, desc, uid } = req.body
+        const founditem = await Founditem.create({
+            name,
+            type,
+            date,
+            place,
+            desc,
+            uid,
+        })
+        if (!founditem)
+            return res.send({ status: 401, msg: '添加失物信息失败' })
+        return res.send({
+            status: 200,
+            msg: '添加成功',
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '添加失物信息失败' })
+    }
 
 }
 
 // 更新失物信息
 const updateFoundItem = async (req, res) => {
-
+    try {
+        const { name, type, date, place, desc, fid } = req.body
+        const founditem = await Founditem.update({
+            name,
+            type,
+            date,
+            place,
+            desc,
+        },
+            {
+                where: {
+                    fid,
+                },
+            }
+        )
+        if (!founditem)
+            return res.send({ status: 401, msg: '更新失物信息失败' })
+        return res.send({
+            status: 200,
+            msg: '更新成功',
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '更新信息失败' })
+    }
 }
 
 // 删除失物信息
 const deleteFoundItem = async (req, res) => {
+    try {
+        const { fid } = req.body
+        await Founditem.destroy({
+            where: {
+                fid,
+            },
+        })
 
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '添加失物信息失败' })
+    }
 }
 
 // 获取所有失物的类型
 const queryFountitemType = async (req, res) => {
+    try {
+        const founditemType = await Founditem.findAll({
+            attributes: ['type'],
+        })
+        if (!founditemType)
+            return res.send({ status: 401, msg: '无失物类型' })
 
+        const uniqueTypes = new Set(founditemType.map(item => item.type));
+
+        // 将Set转换为数组，以便在响应中发送
+        const data = Array.from(uniqueTypes);
+
+        return res.send({
+            status: 200,
+            msg: '查询成功',
+            data: data
+        })
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '查询失败' })
+    }
 }
+
+// 修改失物信息状态
+const editFoundItemStatus = async (req, res) => {
+    try {
+        const { fid, status } = req.body
+        await Founditem.update({
+            status
+        },
+            {
+                where: {
+                    fid,
+                },
+            })
+    }
+    catch (e) {
+        return res.send({ status: 401, msg: '修改失物状态失败' })
+    }
+}
+
 
 export {
     queryFoundItemList,

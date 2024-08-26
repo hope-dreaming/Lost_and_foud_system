@@ -4,28 +4,31 @@ import styles from './page.module.css'
 import { usePathname, useRouter } from "next/navigation";
 import { Button, Form, Input, message } from "antd";
 import classnames from "classnames";
-import Head from "next/head";
-import Image from "next/image";
-// import { UserLoginType } from "@/types";
 import request from "@/utils/request";
+import { UserLoginType } from '@/types';
 
 export default function Login() {
     const router = useRouter()
     const pathname = usePathname()
 
-    // const onFinish = async (values: UserLoginType) => {
-    const onFinish = async (values: any) => {
+    const onFinish = async (values: UserLoginType) => {
         try {
-            // const res = await request.post("/api/login", values);
-            // console.log(
-            //     "%c [ res ]-17",
-            //     "font-size:13px; background:pink; color:#bf2c9f;",
-            //     res
-            // );
-            // localStorage.setItem("user", JSON.stringify(res.data));
-            message.success("登陆成功");
+            const res = await request.post("/api/login", values);
+            if (res.sucess) {
+                message.success("登陆成功");
+                localStorage.setItem("user", JSON.stringify(
+                    {
+                        info: res.data,
+                        token: res.token
+                    }));
+                router.push("/backend/lossitem");
+            } else {
+                message.error("登陆失败");
+            }
 
-            router.push("/backend/lossitem");
+
+
+
         } catch (error) {
             console.error(error);
         }
@@ -41,14 +44,14 @@ export default function Login() {
                 <div className={styles.form}>
                     <Form
                         name="basic"
-                        initialValues={{ name: "", password: "" }}
+                        initialValues={{ tele: "", password: "" }}
                         onFinish={onFinish}
                         layout="vertical"
                         autoComplete="off"
                         size="large"
                     >
                         <Form.Item
-                            name="name"
+                            name="tele"
                             label={<span className={styles.label}>账号</span>}
                             rules={[{ required: true, message: "请输入用户名" }]}
                         >

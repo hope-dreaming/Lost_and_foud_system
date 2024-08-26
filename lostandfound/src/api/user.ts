@@ -2,26 +2,34 @@ import { UserQueryType, UserType } from "@/types";
 import request from "@/utils/request";
 import qs from "qs";
 
-export const setLogout = async () => {
-    await request.get(`/api/logout`);
+
+
+export async function getUserList(params?: any) {
+    const url = "/api/queryUserList";
+    const res = await request.post(url, params);
+    return res
 };
 
-export const getUserList = (params?: UserQueryType) => {
-    return request.post("/api/queryUserList/", params);
+export async function getUserInfo(params?: any) {
+    const url = "/api/queryUserInfo";
+    const res = await request.post(url, params);
+    return res
 };
 
-export const getUserDetail = (id: string) => {
-    return request.get(`/api/users/${id}`);
+export async function addUserInfo(params?: any) {
+    const url = "/api/addUserInfo";
+    const res = await request.post(url, params);
+    return res
 };
 
-export const userDelete = (id: string) => {
-    return request.delete(`/api/users/${id}`);
+export async function updateUserInfo(params?: any) {
+    const url = "/api/updateUserInfo";
+    const res = await request.post(url, params);
+    return res
 };
 
-export const userAdd = (params: UserType) => {
-    return request.post("/api/users", params);
-};
-
-export const userUpdate = (id: string, params: UserType) => {
-    return request.put(`/api/users/${id}`, params);
+export async function deleteUserInfo(params?: any) {
+    const url = "/api/deleteUserInfo";
+    const res = await request.post(url, params);
+    return res
 };

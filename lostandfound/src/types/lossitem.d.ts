@@ -8,13 +8,15 @@ export interface LossitemQuery {
 }
 
 export interface LossitemType {
+    lid?: number;
     name: string;
     type?: string;
-    time: string;
-    address: string;
+    date: string;
+    place: string;
     desc?: string;
-    uid: string;
+    isfound: number;
 }
+
 export interface LossitemLayoutType {
     title: string;
 
