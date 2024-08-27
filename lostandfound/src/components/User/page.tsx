@@ -13,13 +13,15 @@ import {
 } from 'antd';
 
 import styles from './page.module.css'
-import { userAdd, userUpdate } from '@/api';
-import { UserType, UserFormProps } from '@/types';
+import { UserType, UserFormProps, UserInfoType } from '@/types';
 import { useRouter } from 'next/navigation';
 import { title } from 'process';
 import { USER_ROLE, USER_SEXY, USER_STATUS } from '@/constants';
 import Content from '../Content';
+import { addUserInfo, updateUserInfo } from '@/api';
+import { useCurrentUser } from '@/utils/hoos';
 
+const Option = Select.Option;
 
 const formItemLayout = {
     labelCol: {
@@ -35,30 +37,35 @@ const formItemLayout = {
 const UserLayout: React.FC<UserFormProps> = ({
     title,
     editData = {
-        sex: USER_SEXY.MAN,
+        sexy: USER_SEXY.MAN,
         status: USER_STATUS.ON,
         role: USER_ROLE.USER,
         tele: null,
+        uid: null,
     },
 }) => {
 
+    const isEdit = editData?.uid ? true : false
+    const btn_action = isEdit ? "修改" : "创建";
     const [form] = Form.useForm()
     const router = useRouter()
-    // const user = userCurrentUser()
+    const user = useCurrentUser()
+
     useEffect(() => {
         form.setFieldsValue(editData)
     }, [editData, form])
-    const handleFinish = async (values: UserType) => {
+
+    const handleFinish = async (values: UserInfoType) => {
         try {
-            if (editData?.tele) {
-                await userUpdate(editData.tele, values);
-                message.success("编辑成功");
+            if (editData?.uid) {
+                await updateUserInfo(values);
+                message.success("更新成功");
             } else {
-                await userAdd(values);
+                await addUserInfo(values);
                 message.success("创建成功");
             }
             setTimeout(() => {
-                router.push("/user");
+                router.push("/backend/user");
             });
         } catch (error) {
             console.error(error);
@@ -72,21 +79,27 @@ const UserLayout: React.FC<UserFormProps> = ({
                 <Form
                     {...formItemLayout}
                     variant="filled"
-                    style={{ maxWidth: 600 }}
+                    className={styles.form}
                     onFinish={handleFinish}
+                    initialValues={editData}
 
                 >
                     <Form.Item
                         label="电话号码"
                         name="tele"
                         rules={[{ required: true, message: '请输入账号（电话号码）' }]}
+
                     >
-                        <Input />
+                        {isEdit ? (<Select >
+                            <Option key={user?.info?.uid} value={user?.info?.uid}>
+                                {user?.info?.tele}
+                            </Option>
+                        </Select>) : (<Input />)}
                     </Form.Item>
 
                     <Form.Item
                         label="学号"
-                        name="id"
+                        name="uno"
 
                     >
                         <Input />
@@ -104,7 +117,7 @@ const UserLayout: React.FC<UserFormProps> = ({
 
                     <Form.Item
                         label="用户性别"
-                        name="gender"
+                        name="sexy"
                         rules={[{ required: true, message: '请选择用户性别' }]}
                     >
                         <Select>
@@ -137,7 +150,7 @@ const UserLayout: React.FC<UserFormProps> = ({
 
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button type="primary" htmlType="submit">
-                            创建
+                            {btn_action}
                         </Button>
                     </Form.Item>
                 </Form>

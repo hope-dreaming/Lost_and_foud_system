@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
@@ -9,9 +9,10 @@ import { getLossItemList } from '@/api/lossitem';
 import { LossitemQuery, ReturnitemQueryType } from '@/types';
 import Content from '@/components/Content';
 import { getFoundItemList } from '@/api/founditem';
-import { getReturnItemList } from '@/api';
+import { getReturnItemList, updateReturnitem } from '@/api';
 import { useCurrentUser } from '@/utils/hoos';
 import { usePathname } from 'next/navigation';
+import { RETURN_ISOK, USER_ROLE } from '@/constants';
 
 export default function Returnitem() {
 
@@ -52,8 +53,8 @@ export default function Returnitem() {
                 <Flex>
                     <Space size="middle">
 
-                        <Button type="primary" ghost onClick={() => { }}>同意</Button>
-                        <Button type="primary" danger ghost onClick={() => { }}>驳回</Button>
+                        <Button type="primary" ghost onClick={() => { handleTackle(record.rid as number, RETURN_ISOK.OK as number) }}>同意</Button>
+                        <Button type="primary" danger ghost onClick={() => { handleTackle(record.rid as number, RETURN_ISOK.NO as number) }}>驳回</Button>
 
                     </Space>
                 </Flex>
@@ -70,16 +71,23 @@ export default function Returnitem() {
         showSizeChanger: true,
     })
 
-    const handleSearchFinish = async (values: ReturnitemQueryType) => {
-        console.log('Received values from form: ', values);
-        fetchData(values)
-
-    };
-
+    const handleTableChange = (pagination: TablePaginationConfig) => {
+        setPagination({
+            current: pagination.current ?? 1,
+            pageSize: pagination.pageSize ?? 15,
+            showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
+        })
+    }
     const handleSearchReset = () => {
         // console.log(form)
         form.resetFields();
     }
+
+    const handleSearchFinish = async (values: ReturnitemQueryType) => {
+        // console.log('Received values from form: ', values);
+        fetchData(values)
+
+    };
 
     const fetchData = useCallback(
         (search?: ReturnitemQueryType) => {
@@ -89,9 +97,9 @@ export default function Returnitem() {
                 pageSize: pagination.pageSize as number,
                 item_fid,
                 item_tele,
-                role: user?.role,
+                role: user?.info?.role,
                 isok,
-                userId: user?.tele
+                userId: user?.info?.tele
             }).then((res) => {
                 setData(res.data);
                 console.log(res)
@@ -99,20 +107,52 @@ export default function Returnitem() {
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [pagination, user?.role]
+        [pagination, user?.info?.role]
     );
 
     useEffect(() => {
         fetchData();
     }, [fetchData, pagination]);
 
-    const handleTableChange = (pagination: TablePaginationConfig) => {
-        setPagination({
-            current: pagination.current ?? 1,
-            pageSize: pagination.pageSize ?? 15,
-            showSizeChanger: pagination.showSizeChanger ?? false, // 假设有showSizeChanger属性且默认false
-        })
-    }
+    const handleTackle = (id: number, isok: number) => {
+        const params = {
+            isok,
+            id,
+        }
+        if (isok === RETURN_ISOK.OK) {
+            Modal.confirm({
+                title: "确认同意该申请？",
+                okText: "确定",
+                cancelText: "取消",
+                async onOk() {
+                    try {
+                        await updateReturnitem(params);
+                        message.success("审核通过");
+                        fetchData(form.getFieldsValue());
+                    } catch (error) {
+                        console.error(error);
+                    }
+                },
+            });
+        } else if (isok === RETURN_ISOK.NO) {
+            Modal.confirm({
+                title: "确认驳回该申请？",
+                okText: "确定",
+                cancelText: "取消",
+                async onOk() {
+                    try {
+                        await updateReturnitem(params);
+                        message.success("审核驳回");
+                        fetchData(form.getFieldsValue());
+                    } catch (error) {
+                        console.error(error);
+                    }
+                },
+            });
+        }
+
+    };
+
 
 
 
@@ -164,7 +204,7 @@ export default function Returnitem() {
                         columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
                         rowKey='tele'
                         onChange={handleTableChange}
-                        scroll={{ x: 1000 }}
+                        // scroll={{ x: 1000 }}
                         sticky={{ offsetHeader: 0, offsetScroll: -1 }}
                         pagination={{
                             ...pagination,

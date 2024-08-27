@@ -110,8 +110,8 @@ export default function Lossitem() {
                 pageSize: pagination.pageSize as number,
                 item_name,
                 item_type,
-                role: user?.role,
-                userId: user?.uid,
+                role: user?.info?.role,
+                userId: user?.info?.uid,
             }).then((res) => {
                 setData(res.data);
                 console.log(res)
@@ -119,7 +119,7 @@ export default function Lossitem() {
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [pagination, user?.role]
+        [pagination, user?.info?.role]
     );
 
     useEffect(() => {
@@ -182,7 +182,7 @@ export default function Lossitem() {
                         dataSource={data}
                         columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
                         onChange={handleTableChange}
-                        scroll={{ x: 1000 }}
+                        // scroll={{ x: 1000 }}
                         sticky={{ offsetHeader: 0, offsetScroll: -1 }}
                         pagination={{
                             ...pagination,

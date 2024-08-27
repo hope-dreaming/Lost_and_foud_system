@@ -22,6 +22,7 @@ export async function addUserInfo(params?: any) {
     return res
 };
 
+// 修改用户信息
 export async function updateUserInfo(params?: any) {
     const url = "/api/updateUserInfo";
     const res = await request.post(url, params);
@@ -30,6 +31,14 @@ export async function updateUserInfo(params?: any) {
 
 export async function deleteUserInfo(params?: any) {
     const url = "/api/deleteUserInfo";
+    const res = await request.post(url, params);
+    return res
+};
+
+updateUserSatus
+
+export async function updateUserSatus(params?: any) {
+    const url = "/api/updateUserSatus";
     const res = await request.post(url, params);
     return res
 };

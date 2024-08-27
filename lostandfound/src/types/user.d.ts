@@ -6,7 +6,7 @@ export interface UserInfoType {
     role: USER_ROLE;
     status?: USER_STATUS;
     sexy: USER_SEXY;
-    uid?: string;
+    uid?: number;
     password: string;
     createdAt?: string;
     updatedAt?: string;
@@ -32,5 +32,5 @@ export interface UserQueryType {
 
 export interface UserFormProps {
     title: string;
-    editData?: UserType;
+    editData?: UserInfoType;
 }

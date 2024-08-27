@@ -8,7 +8,6 @@ import styles from './page.module.css'
 import Head from 'next/head';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { setLogout } from '@/api';
 import { useCurrentUser } from '@/utils/hoos';
 import { USER_ROLE } from '@/constants';
 

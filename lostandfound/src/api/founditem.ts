@@ -10,7 +10,7 @@ export async function getFoundItemList(params?: FounditemQuery) {
     return res
 }
 
-export async function getFoundItemInfo(params?: FounditemQuery) {
+export async function getFoundItemInfo(params?: FounditemQuery | number) {
     // https://apifoxmock.com/m1/4946855-4604544-default/queryLossitem?name=xxx&type=xxx
     const url = "/api/queryFoundItemInfo";
     const res = await request.post(url, params);

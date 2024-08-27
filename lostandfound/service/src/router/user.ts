@@ -103,6 +103,10 @@ const deleteUserInfo = async (req, res) => {
 
 }
 
+// 更新用户启用状态
+const updateUserSatus = async (req, res) => {
+}
+
 
 export {
     queryUserList,
@@ -110,4 +114,5 @@ export {
     addUserInfo,
     updateUserInfo,
     deleteUserInfo,
+    updateUserSatus,
 }

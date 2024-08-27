@@ -10,7 +10,7 @@ export async function getLossItemList(params?: LossitemQuery) {
     return res
 }
 
-export async function getLosttItemInfo(params?: LossitemQuery) {
+export async function getLostItemInfo(params?: LossitemQuery | number) {
     // https://apifoxmock.com/m1/4946855-4604544-default/queryLossitem?name=xxx&type=xxx
     const url = "/api/queryLosttItemInfo";
     const res = await request.post(url, params);

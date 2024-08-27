@@ -3,15 +3,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Col, Flex, Form, Input, message, Modal, Row, Select, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
-import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import { getLossItemList } from '@/api/lossitem';
-import { LossitemQuery, UserQueryType, UserType } from '@/types';
+import { UserInfoType, UserQueryType, UserType } from '@/types';
 import Content from '@/components/Content';
-import { getFoundItemList } from '@/api/founditem';
-import { title } from 'process';
 import { USER_STATUS } from '@/constants';
-import { getUserList, userDelete, userUpdate } from '@/api';
+import { deleteUserInfo, getUserList, updateUserSatus } from '@/api';
+import { useRouter } from 'next/navigation';
 const Option = Select.Option;
 
 const STATUS = {
@@ -27,8 +24,8 @@ export default function User() {
 
     const [form] = Form.useForm();
     const [list, setList] = useState<UserType[]>([]);
-    // const user = useCurrentUser();
-
+    const router = useRouter();
+    console.log(router);
 
     const columns = [
         {
@@ -73,29 +70,30 @@ export default function User() {
             dataIndex: 'action',
             key: 'action',
             align: 'center',
-            render: (_: any, row: UserType) => (
+            render: (_: any, record: UserInfoType) => (
                 <Flex>
                     <Space size="middle">
 
                         <Button type="primary" ghost onClick={() => {
-                            // setEditData(row);
-                            // router.push(`/user/edit/${row._id}`);
-                            handleUserEdit(row.tele)
+
+                            router.push(`/backend/user/edit/${record.tele}`);
+
                         }}
                         >
                             编辑
                         </Button>
                         <Button
                             type="link"
-                            danger={row.status === USER_STATUS.ON}
+                            danger={record.status === USER_STATUS.ON}
                             onClick={() => {
-                                handleStatusUpdate(row);
+                                handleStatusUpdate(record);
                             }}
                         >
-                            {row.status === USER_STATUS.ON ? "禁用" : "启动"}
+                            {record.status === USER_STATUS.ON ? "禁用" : "启动"}
+
                         </Button>
                         <Button type="primary" danger ghost onClick={() => {
-                            handleDeleteModal(row.tele);
+                            handleDelete(record.uid as number);
                         }}
                         >
                             删除
@@ -115,17 +113,17 @@ export default function User() {
         showSizeChanger: true,
     })
 
-    const handleSearchFinish = async (values: UserQueryType) => {
-        console.log('Received values from form: ', values);
-        fetchData(values)
 
-    };
 
     const handleSearchReset = () => {
         // console.log(form)
         form.resetFields();
     }
+    const handleSearchFinish = async (values: UserQueryType) => {
+        console.log('Received values from form: ', values);
+        fetchData(values)
 
+    };
     const fetchData = useCallback(
         (search?: UserQueryType) => {
             const { item_name, item_status, item_tele } = search || {};
@@ -156,30 +154,33 @@ export default function User() {
         })
     }
 
-    const handleDeleteModal = (tele: string) => {
-        Modal.confirm({
-            title: "确认删除？",
-            //   icon: <ExclamationCircleFilled />,
-            okText: "确定",
-            cancelText: "取消",
-            async onOk() {
-                await userDelete(tele);
-                message.success("删除成功");
-                fetchData(form.getFieldsValue());
-            },
-        });
-    };
-    const handleStatusUpdate = async (row: UserType) => {
-        await userUpdate(row.tele, {
-            ...row,
-            status: row.status === USER_STATUS.ON ? USER_STATUS.OFF : USER_STATUS.ON,
-        });
+
+    const handleStatusUpdate = async (record: UserInfoType) => {
+        const params = {
+            uid: record.uid,
+            status: record.status === USER_STATUS.ON ? USER_STATUS.OFF : USER_STATUS.ON,
+        }
+        await updateUserSatus(params);
         fetchData(form.getFieldsValue());
     };
 
-    const handleUserEdit = async (tele: string) => {
+    const handleDelete = (id: number) => {
+        Modal.confirm({
+            title: "确认删除？",
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                try {
+                    await deleteUserInfo(id);
+                    message.success("删除成功");
+                    fetchData(form.getFieldsValue());
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        });
+    };
 
-    }
 
 
 
@@ -244,7 +245,7 @@ export default function User() {
                         columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
                         rowKey="tele"
                         onChange={handleTableChange}
-                        scroll={{ x: 1000 }}
+                        // scroll={{ x: 1000 }}
                         sticky={{ offsetHeader: 0, offsetScroll: -1 }}
                         pagination={{
                             ...pagination,

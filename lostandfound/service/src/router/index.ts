@@ -1,5 +1,5 @@
 import express from 'express'
-import { addUserInfo, deleteUserInfo, queryUserInfo, queryUserList, updateUserInfo } from './user'
+import { addUserInfo, deleteUserInfo, queryUserInfo, queryUserList, updateUserInfo, updateUserSatus } from './user'
 import { login } from './login'
 import { addReturnitem, deleteReturnitem, queryReturnitemList, updateReturnitem } from './returnitem'
 import { addFoundItem, deleteFoundItem, queryFoundItemInfo, queryFoundItemList, queryFountitemType, updateFoundItem } from './founditem'
@@ -62,5 +62,7 @@ router.post('/addUserInfo', addUserInfo)
 router.post('/updateUserInfo', updateUserInfo)
 
 router.post('/deleteUserInfo', deleteUserInfo)
+
+router.post('/updateUserSatus', updateUserSatus)
 
 export default router

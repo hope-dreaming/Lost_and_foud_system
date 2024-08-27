@@ -4,7 +4,8 @@ const sequelize: any = new Sequelize(
     'lostandfound', 'root', 'Mysql', {
     host: 'localhost',
     dialect: 'mysql',
-    port: '3306'
+    port: '3306',
+    logging: false,
 });
 
 // 连接

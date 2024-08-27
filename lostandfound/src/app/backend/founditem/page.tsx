@@ -234,7 +234,7 @@ export default function Lossitem() {
                         dataSource={data}
                         columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
                         onChange={handleTableChange}
-                        scroll={{ x: 1000 }}
+                        // scroll={{ x: 1000 }}
                         sticky={{ offsetHeader: 0, offsetScroll: -1 }}
                         pagination={{
                             ...pagination,

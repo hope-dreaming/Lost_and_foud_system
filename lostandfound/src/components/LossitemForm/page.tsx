@@ -9,13 +9,14 @@ import {
     message,
     Select,
 } from 'antd';
-import { addLossItemInform } from '@/api/index';
+import { addLossItemInform, updateLossItem } from '@/api/index';
 import { LossitemLayoutType, LossitemType } from '@/types';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css'
 import Content from '../Content';
 import dayjs from 'dayjs';
 import { useCurrentUser } from '@/utils/hoos';
+import { USER_ROLE } from '@/constants';
 
 
 const Option = Select.Option;
@@ -32,21 +33,46 @@ const formItemLayout = {
     },
 };
 
-const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
+const LossitemLayout: React.FC<LossitemLayoutType> = ({
+    title,
+    editData = {
+        lid: null
 
+    },
+}) => {
+
+    const isEdit = editData?.lid ? true : false
+    const btn_action = isEdit ? "更新" : "创建";
     const router = useRouter();
     const [form] = Form.useForm()
     const user = useCurrentUser()
-    const handleFinishform = async (values: LossitemType) => {
-        // console.log(values);
-        if (values.date) {
-            values.date = dayjs(values.date).format('YYYY-MM-DD HH:mm:ss')
-        }
-        await addLossItemInform(values)
-        message.success("添加成功");
-        router.push('/backend/lossitem/show')
-    }
 
+    const handleFinish = async (values: LossitemType) => {
+        try {
+            if (editData?.lid) {
+                if (values.date) {
+                    values.date = dayjs(values.date).format('YYYY-MM-DD HH:mm:ss')
+                }
+                await updateLossItem(values);
+                message.success("更新成功");
+            } else {
+                await addLossItemInform(values);
+                message.success("创建成功");
+            }
+            if (user?.info.role === USER_ROLE.ADMIN) {
+                setTimeout(() => {
+                    router.push("/backend/lossitem");
+                });
+            } else if (user?.info.role === USER_ROLE.USER) {
+                setTimeout(() => {
+                    router.push("/backend/lossitem/show");
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
 
     return (
@@ -58,7 +84,8 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
                     // variant="filled"
                     layout='horizontal'
                     className={styles.form}
-                    onFinish={handleFinishform}
+                    onFinish={handleFinish}
+                    initialValues={editData}
                 >
                     <Form.Item
                         label="失物名称"
@@ -107,7 +134,7 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
                         name="uid"
                         rules={[{ required: true, message: '请输入失主账号' }]}
                     >
-                        <Select allowClear>
+                        <Select >
                             <Option key={user?.info?.uid} value={user?.info?.uid}>
                                 {user?.info?.tele}
                             </Option>
@@ -120,7 +147,7 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({ title }) => {
                             htmlType="submit"
                             className={styles.btn}
                         >
-                            添加
+                            {btn_action}
                         </Button>
                     </Form.Item>
                 </Form>

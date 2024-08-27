@@ -4,7 +4,8 @@ export interface LossitemQuery {
     item_name?: string;
     item_type?: string;
     role?: USER_ROLE;
-    userId?: string;
+    userId?: number;
+    lid?: number;
 }
 
 export interface LossitemType {
@@ -19,5 +20,5 @@ export interface LossitemType {
 
 export interface LossitemLayoutType {
     title: string;
-
+    editData?: LossitemType;
 }

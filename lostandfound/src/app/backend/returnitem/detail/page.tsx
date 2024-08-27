@@ -93,9 +93,9 @@ export default function Returnitemdetail() {
                 item_fid,
                 item_tele,
                 item_uaid,
-                role: user?.role,
+                role: user?.info?.role,
                 isok,
-                userId: user?.tele
+                userId: user?.info?.tele
             }).then((res) => {
                 setData(res.data);
                 console.log(res)
@@ -103,7 +103,7 @@ export default function Returnitemdetail() {
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [pagination, user?.role]
+        [pagination, user?.info?.role]
     );
 
     useEffect(() => {
@@ -170,7 +170,7 @@ export default function Returnitemdetail() {
                         dataSource={data}
                         columns={columns as (ColumnGroupType<any> | ColumnType<any>)[]}
                         onChange={handleTableChange}
-                        scroll={{ x: 1000 }}
+                        // scroll={{ x: 1000 }}
                         sticky={{ offsetHeader: 0, offsetScroll: -1 }}
                         pagination={{
                             ...pagination,
