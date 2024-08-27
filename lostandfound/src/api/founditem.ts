@@ -1,5 +1,5 @@
 import qs from "qs"
-import { FounditemQuery, FounditemType } from "@/types"
+import { FounditemOneQueryType, FounditemQuery, FounditemType } from "@/types"
 import request from "@/utils/request";
 
 export async function getFoundItemList(params?: FounditemQuery) {
@@ -27,6 +27,13 @@ export async function addFoundItem(params?: any) {
 
 export async function updateFoundItem(params?: any) {
     const url = "/api/updateFoundItem";
+    const res = await request.post(url, params);
+
+    return res
+}
+
+export async function getOneFoundItem(params: FounditemOneQueryType) {
+    const url = "/api/queryOneFoundItem";
     const res = await request.post(url, params);
 
     return res

@@ -97,9 +97,9 @@ export default function Returnitem() {
                 pageSize: pagination.pageSize as number,
                 item_fid,
                 item_tele,
-                role: user?.info?.role,
+                role: user?.role,
                 isok,
-                userId: user?.info?.tele
+                userId: user?.tele
             }).then((res) => {
                 setData(res.data);
                 console.log(res)
@@ -107,7 +107,7 @@ export default function Returnitem() {
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [pagination, user?.info?.role]
+        [pagination, user?.role]
     );
 
     useEffect(() => {

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Button,
     DatePicker,
@@ -9,7 +9,7 @@ import {
     message,
     Select,
 } from 'antd';
-import { addLossItemInform, updateLossItem } from '@/api/index';
+import { addLossItemInform, updateLossItemInform } from '@/api/index';
 import { LossitemLayoutType, LossitemType } from '@/types';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css'
@@ -17,6 +17,8 @@ import Content from '../Content';
 import dayjs from 'dayjs';
 import { useCurrentUser } from '@/utils/hoos';
 import { USER_ROLE } from '@/constants';
+import moment from 'moment';
+// import moment from 'moment';
 
 
 const Option = Select.Option;
@@ -35,10 +37,7 @@ const formItemLayout = {
 
 const LossitemLayout: React.FC<LossitemLayoutType> = ({
     title,
-    editData = {
-        lid: null
-
-    },
+    editData
 }) => {
 
     const isEdit = editData?.lid ? true : false
@@ -46,24 +45,38 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({
     const router = useRouter();
     const [form] = Form.useForm()
     const user = useCurrentUser()
+    const uid = isEdit ? editData?.uid : user?.uid;
+    const tele = isEdit ? editData?.tele : user?.tele;
+    // console.log(editData);
+
+    useEffect(() => {
+        form.setFieldsValue(editData)
+    }, [editData, form])
 
     const handleFinish = async (values: LossitemType) => {
         try {
+            if (values.date) {
+                values.date = dayjs(values.date).format('YYYY-MM-DD  HH:mm:ss')
+            }
             if (editData?.lid) {
-                if (values.date) {
-                    values.date = dayjs(values.date).format('YYYY-MM-DD HH:mm:ss')
-                }
-                await updateLossItem(values);
+                console.log(values);
+                await updateLossItemInform({
+                    ...values,
+                    lid: editData.lid,
+                });
                 message.success("更新成功");
             } else {
-                await addLossItemInform(values);
+                await addLossItemInform({
+                    ...values,
+                    // uid: user?.uid,
+                });
                 message.success("创建成功");
             }
-            if (user?.info.role === USER_ROLE.ADMIN) {
+            if (user?.role === USER_ROLE.ADMIN) {
                 setTimeout(() => {
                     router.push("/backend/lossitem");
                 });
-            } else if (user?.info.role === USER_ROLE.USER) {
+            } else if (user?.role === USER_ROLE.USER) {
                 setTimeout(() => {
                     router.push("/backend/lossitem/show");
                 });
@@ -81,8 +94,8 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({
                 <Form
                     form={form}
                     {...formItemLayout}
-                    // variant="filled"
-                    layout='horizontal'
+                    variant="filled"
+                    // layout='horizontal'
                     className={styles.form}
                     onFinish={handleFinish}
                     initialValues={editData}
@@ -134,11 +147,13 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({
                         name="uid"
                         rules={[{ required: true, message: '请输入失主账号' }]}
                     >
+
                         <Select >
-                            <Option key={user?.info?.uid} value={user?.info?.uid}>
-                                {user?.info?.tele}
+                            <Option key={uid} value={uid}>
+                                {tele}
                             </Option>
                         </Select>
+
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>

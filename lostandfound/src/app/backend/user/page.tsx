@@ -61,8 +61,8 @@ export default function User() {
         },
         {
             title: '学号',
-            dataIndex: 'uid',
-            key: 'uid',
+            dataIndex: 'uno',
+            key: 'uno',
             align: 'center',
         },
         {
@@ -76,7 +76,7 @@ export default function User() {
 
                         <Button type="primary" ghost onClick={() => {
 
-                            router.push(`/backend/user/edit/${record.tele}`);
+                            router.push(`/backend/user/edit/${record.uid}`);
 
                         }}
                         >

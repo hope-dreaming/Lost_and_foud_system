@@ -95,7 +95,7 @@ export default function RootLayout({
   const router = useRouter();
   const user = useCurrentUser();
 
-  const ITEMS = user?.info.role === USER_ROLE.USER ? START_ITEMS : [...START_ITEMS,
+  const ITEMS = user?.role === USER_ROLE.USER ? START_ITEMS : [...START_ITEMS,
   {
     label: "用户管理",
     key: "user",
@@ -159,7 +159,7 @@ export default function RootLayout({
             <Dropdown menu={{ items: USER_ITEMS }} placement="bottom">
               <span onClick={(e) => e.preventDefault()}>
                 <Space>
-                  {user?.info?.name ? user.info.name : user?.info.tele}
+                  {user?.name ? user.name : user?.tele}
                   {/* 用户名 */}
                   <DownOutlined />
                 </Space>

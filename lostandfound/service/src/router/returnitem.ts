@@ -20,7 +20,7 @@ const queryReturnitemList = async (req, res) => {
         })
 
         if (!returnitemList)
-            res.send({ status: 401, message: '查询失败', data: null })
+            res.send({ status: 200, message: '查询失败', data: null })
 
         const result = []
         for (const list of returnitemList) {
@@ -42,7 +42,7 @@ const queryReturnitemList = async (req, res) => {
         })
     }
     catch (e) {
-        return res.send({ status: 401, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null })
     }
 }
 
@@ -57,7 +57,7 @@ const addReturnitem = async (req, res) => {
             fid,
         })
         if (!returnitem)
-            res.send({ status: 401, message: '申请失败', data: null })
+            res.send({ status: 200, message: '申请失败', data: null })
 
         res.send({
             status: 200,
@@ -65,7 +65,7 @@ const addReturnitem = async (req, res) => {
         })
     }
     catch (e) {
-        return res.send({ status: 401, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null })
     }
 }
 
@@ -80,14 +80,14 @@ const updateReturnitem = async (req, res) => {
             where: { rid },
         })
         if (!returnitem)
-            res.send({ status: 401, message: '审核失败', data: null })
+            res.send({ status: 200, message: '审核失败', data: null })
         res.send({
             status: 200,
             message: '审核成功',
         })
     }
     catch (e) {
-        return res.send({ status: 401, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null })
     }
 }
 
@@ -99,7 +99,7 @@ const deleteReturnitem = async (req, res) => {
             where: { rid },
         })
         if (!returnitem)
-            res.send({ status: 401, message: '删除失败', data: null })
+            res.send({ status: 200, message: '删除失败', data: null })
 
         res.send({
             status: 200,
@@ -107,7 +107,7 @@ const deleteReturnitem = async (req, res) => {
         })
     }
     catch (e) {
-        return res.send({ status: 401, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null })
     }
 }
 

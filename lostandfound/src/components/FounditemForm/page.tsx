@@ -17,6 +17,7 @@ import styles from './page.module.css'
 import Content from '../Content';
 import { useCurrentUser } from '@/utils/hoos';
 import { USER_ROLE } from '@/constants';
+import dayjs from 'dayjs';
 
 const Option = Select.Option;
 
@@ -45,6 +46,8 @@ const FounditemLayout: React.FC<FounditemLayoutType> = ({
   const user = useCurrentUser()
   const isEdit = editData?.fid ? true : false
   const btn_action = isEdit ? "更新" : "创建";
+  const uid = isEdit ? editData.uid : user?.uid;
+  const tele = isEdit ? editData.tele : user?.tele;
 
   useEffect(() => {
     form.setFieldsValue(editData);
@@ -52,22 +55,28 @@ const FounditemLayout: React.FC<FounditemLayoutType> = ({
 
   const handleFinish = async (values: FounditemType) => {
     try {
+      if (values.date) {
+        values.date = dayjs(values.date).format('YYYY-MM-DD HH:mm:ss')
+      }
       if (editData?.fid) {
-        await updateFoundItem(values);
+        await updateFoundItem({
+          ...values,
+          fid: editData.fid,
+          // uid: editData.uid,
+        });
         message.success("更新成功");
       } else {
         await addFoundItem(values);
         message.success("创建成功");
-        if (user?.info.role === USER_ROLE.ADMIN) {
-          setTimeout(() => {
-            router.push("/backend/founditem");
-          });
-        } else if (user?.info.role === USER_ROLE.USER) {
-          setTimeout(() => {
-            router.push("/backend/founditem/show");
-          });
-        }
-
+      }
+      if (user?.role === USER_ROLE.ADMIN) {
+        setTimeout(() => {
+          router.push("/backend/founditem");
+        });
+      } else if (user?.role === USER_ROLE.USER) {
+        setTimeout(() => {
+          router.push("/backend/founditem/show");
+        });
       }
 
     } catch (error) {
@@ -134,10 +143,11 @@ const FounditemLayout: React.FC<FounditemLayoutType> = ({
             rules={[{ required: true, message: 'Please input!' }]}
           >
             <Select >
-              <Option key={user?.info?.uid} value={user?.info?.uid}>
-                {user?.info?.tele}
+              <Option key={uid} value={uid}>
+                {tele}
               </Option>
             </Select>
+
           </Form.Item>
 
 

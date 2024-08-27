@@ -1,4 +1,4 @@
-import { UserQueryType, UserType } from "@/types";
+import { UserOneQueryType, UserQueryType, UserType } from "@/types";
 import request from "@/utils/request";
 import qs from "qs";
 
@@ -10,11 +10,12 @@ export async function getUserList(params?: any) {
     return res
 };
 
-export async function getUserInfo(params?: any) {
+export async function getUserInfo(params: UserOneQueryType) {
     const url = "/api/queryUserInfo";
     const res = await request.post(url, params);
     return res
 };
+
 
 export async function addUserInfo(params?: any) {
     const url = "/api/addUserInfo";

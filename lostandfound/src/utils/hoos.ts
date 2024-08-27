@@ -1,19 +1,16 @@
-import { UserType } from "@/types";
+import { UserCurrentType, UserType } from "@/types";
 import { useEffect, useState } from "react";
 
 export const useCurrentUser = () => {
-    const [user, setUser] = useState<UserType | null>(null)
+    const [user, setUser] = useState<UserCurrentType>()
     useEffect(() => {
-        const obj = localStorage.getItem("user");
-        if (obj) {
-            // console.log(
-            //     "%c [ obj ]-9",
-            //     "font-size:13px; background:pink; color:#bf2c9f;",
-            //     obj
-            // );
-            setUser(JSON.parse(obj));
-        }
+        const userStorage = localStorage.getItem("user");
+        // console.log("useEffectuserStorage", userStorage);
+        const info = userStorage ? JSON.parse(userStorage).info : ''
+        // console.log("useEffectinfo", info);
+        setUser(info);
     }, []);
+    // console.log("useCurrentUser", user);
 
     return user;
 

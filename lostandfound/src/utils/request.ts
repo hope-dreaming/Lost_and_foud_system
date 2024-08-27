@@ -55,7 +55,7 @@ export const CreateAxiosInstance = (config?: AxiosRequestConfig): AxiosInstanceT
             if (error.response && error.response.status === 401) {
                 return window.location.href = '/login'
             }
-            Antdmessage.error(error?.response?.data?.message || '请求失败2')
+            Antdmessage.error(error?.response?.message || '请求失败2')
             return Promise.reject(error)
         }
     )

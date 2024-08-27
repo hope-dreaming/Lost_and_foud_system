@@ -1,3 +1,4 @@
+import { message } from "antd"
 import { Lossitem } from "src/database/models/lossitem"
 import { User } from "src/database/models/user"
 
@@ -16,7 +17,7 @@ const queryLossItemList = async (req, res) => {
         })
 
         if (!LossitemList)
-            return res.send({ status: 401, message: '无寻物信息', data: null })
+            return res.send({ status: 200, message: '无寻物信息', data: null })
 
         const result = []
         for (const list of LossitemList) {
@@ -38,7 +39,7 @@ const queryLossItemList = async (req, res) => {
 
     }
     catch (e) {
-        return res.send({ status: 401, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null })
     }
 }
 
@@ -48,7 +49,7 @@ const queryLossItemInfo = async (req, res) => {
     try {
         const { item_name, item_type, userId } = req.body
         if (!userId)
-            return res.send({ status: 401, message: '请登录', data: null })
+            return res.send({ status: 200, message: '请登录', data: null })
         const whereReturnItem = {
             ...((item_name !== null && item_name !== undefined && item_name !== '') ? { name: item_name } : {}),
             ...((item_type !== null && item_type !== undefined && item_type !== '') ? { type: item_type } : {}),
@@ -58,7 +59,7 @@ const queryLossItemInfo = async (req, res) => {
             where: whereReturnItem,
         })
         if (!LossitemInfo)
-            return res.send({ status: 401, message: '无寻物信息', data: null })
+            return res.send({ status: 200, message: '无寻物信息', data: null })
         return res.send({
             status: 200,
             message: '查询成功',
@@ -66,10 +67,43 @@ const queryLossItemInfo = async (req, res) => {
         })
     }
     catch (e) {
-        return res.send({ status: 401, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null })
     }
 }
 
+// 查询单个寻物信息以更新
+const queryOneLossItem = async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    try {
+        const { id } = req.body
+        if (!id)
+            return res.send({ status: 200, message: '无该物品信息', data: null })
+        const LossitemInfo = await Lossitem.findOne({
+            where: {
+                lid: id
+            },
+        })
+        if (!LossitemInfo)
+            return res.send({ status: 200, message: '无寻物信息', data: null })
+        const { uid } = LossitemInfo
+        const user = await User.findOne({
+            where: { uid },
+            attributes: ['tele'],
+        })
+        return res.send({
+            status: 200,
+            message: '查询成功',
+            data: {
+                ...LossitemInfo.toJSON(),
+                tele: user.tele,
+            },
+        })
+    }
+    catch (e) {
+        return res.send({ status: 200, message: e.message, data: null })
+    }
+
+}
 // 添加寻物信息
 const addLossItem = async (req, res) => {
     try {
@@ -83,27 +117,28 @@ const addLossItem = async (req, res) => {
             uid,
         })
         if (!lossitem)
-            return res.send({ status: 401, msg: '添加寻物信息失败' })
+            return res.send({ status: 200, message: '添加寻物信息失败' })
         return res.send({
             status: 200,
-            msg: '添加成功',
+            message: '添加成功',
         })
     }
     catch (e) {
-        return res.send({ status: 401, msg: '添加寻物信息失败' })
+        return res.send({ status: 200, msg: '添加寻物信息失败' })
     }
 }
 
 // 修改寻物信息
 const updateLossItem = async (req, res) => {
     try {
-        const { name, type, date, place, desc, lid } = req.body
-        const lossitem = await Lossitem.update({
+        const { name, type, date, place, desc, lid, uid } = req.body
+        await Lossitem.update({
             name,
             type,
             date,
             place,
             desc,
+            uid,
         },
             {
                 where: {
@@ -111,15 +146,14 @@ const updateLossItem = async (req, res) => {
                 },
             }
         )
-        if (!lossitem)
-            return res.send({ status: 401, msg: '修改寻物信息失败' })
-        return res.send({
+
+        res.send({
             status: 200,
-            msg: '修改成功',
+            message: '修改成功',
         })
     }
     catch (e) {
-        return res.send({ status: 401, msg: '修改寻物信息失败' })
+        return res.send({ status: 200, message: '修改寻物信息失败' })
     }
 
 }
@@ -136,7 +170,7 @@ const deleteLossItem = async (req, res) => {
 
     }
     catch (e) {
-        return res.send({ status: 401, msg: '添加失物信息失败' })
+        return res.send({ status: 200, msg: '添加失物信息失败' })
     }
 }
 
@@ -147,7 +181,7 @@ const queryLossItemType = async (req, res) => {
             attributes: ['type'],
         })
         if (!lossitemType)
-            return res.send({ status: 401, msg: '无失物类型' })
+            return res.send({ status: 200, msg: '无失物类型' })
 
         const uniqueTypes = new Set(lossitemType.map(item => item.type));
 
@@ -161,7 +195,7 @@ const queryLossItemType = async (req, res) => {
         })
     }
     catch (e) {
-        return res.send({ status: 401, msg: '查询失败' })
+        return res.send({ status: 200, msg: '查询失败' })
     }
 }
 
@@ -179,7 +213,7 @@ const editLossItemStatus = async (req, res) => {
             })
     }
     catch (e) {
-        return res.send({ status: 401, msg: '修改失物信息状态失败' })
+        return res.send({ status: 200, msg: '修改失物信息状态失败' })
     }
 }
 
@@ -189,5 +223,6 @@ export {
     addLossItem,
     updateLossItem,
     deleteLossItem,
-    queryLossItemType
+    queryLossItemType,
+    queryOneLossItem,
 }

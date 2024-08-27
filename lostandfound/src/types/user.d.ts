@@ -7,13 +7,37 @@ export interface UserInfoType {
     status?: USER_STATUS;
     sexy: USER_SEXY;
     uid?: number;
-    password: string;
+    password?: string;
     createdAt?: string;
     updatedAt?: string;
 
 }
+export interface UserOneQueryType {
+    id: number;
+}
+export interface UserEditInfoType {
+    tele?: string;
+    name?: string;
+    role: USER_ROLE;
+    status?: USER_STATUS;
+    sexy: USER_SEXY;
+    uid?: number;
+    password?: string;
+    createdAt?: string;
+    updatedAt?: string;
+
+}
+export interface UserCurrentType {
+    uid: number;
+    tele: string;
+    name: string;
+    uno?: string;
+    sexy: string;
+    role: string;
+}
+
 export interface UserType {
-    info: UserInfoType;
+    info: UserCurrentType;
     token: string;
 }
 
@@ -32,5 +56,5 @@ export interface UserQueryType {
 
 export interface UserFormProps {
     title: string;
-    editData?: UserInfoType;
+    editData?: UserEditInfoType;
 }

@@ -36,13 +36,7 @@ const formItemLayout = {
 
 const UserLayout: React.FC<UserFormProps> = ({
     title,
-    editData = {
-        sexy: USER_SEXY.MAN,
-        status: USER_STATUS.ON,
-        role: USER_ROLE.USER,
-        tele: null,
-        uid: null,
-    },
+    editData,
 }) => {
 
     const isEdit = editData?.uid ? true : false
@@ -51,6 +45,7 @@ const UserLayout: React.FC<UserFormProps> = ({
     const router = useRouter()
     const user = useCurrentUser()
 
+    console.log(editData)
     useEffect(() => {
         form.setFieldsValue(editData)
     }, [editData, form])
@@ -58,7 +53,10 @@ const UserLayout: React.FC<UserFormProps> = ({
     const handleFinish = async (values: UserInfoType) => {
         try {
             if (editData?.uid) {
-                await updateUserInfo(values);
+                await updateUserInfo({
+                    ...values,
+                    uid: editData.uid,
+                });
                 message.success("更新成功");
             } else {
                 await addUserInfo(values);
@@ -78,6 +76,7 @@ const UserLayout: React.FC<UserFormProps> = ({
             <Content title={title}>
                 <Form
                     {...formItemLayout}
+                    form={form}
                     variant="filled"
                     className={styles.form}
                     onFinish={handleFinish}
@@ -91,8 +90,8 @@ const UserLayout: React.FC<UserFormProps> = ({
 
                     >
                         {isEdit ? (<Select >
-                            <Option key={user?.info?.uid} value={user?.info?.uid}>
-                                {user?.info?.tele}
+                            <Option key={user?.tele} value={user?.tele}>
+                                {user?.tele}
                             </Option>
                         </Select>) : (<Input />)}
                     </Form.Item>
@@ -100,7 +99,6 @@ const UserLayout: React.FC<UserFormProps> = ({
                     <Form.Item
                         label="学号"
                         name="uno"
-
                     >
                         <Input />
                     </Form.Item>
@@ -121,8 +119,8 @@ const UserLayout: React.FC<UserFormProps> = ({
                         rules={[{ required: true, message: '请选择用户性别' }]}
                     >
                         <Select>
-                            <Select.Option value="male">男</Select.Option>
-                            <Select.Option value="female">女</Select.Option>
+                            <Select.Option value={USER_SEXY.MAN}>男</Select.Option>
+                            <Select.Option value={USER_SEXY.WOMAN}>女</Select.Option>
                         </Select>
                     </Form.Item>
 
@@ -142,8 +140,8 @@ const UserLayout: React.FC<UserFormProps> = ({
                         rules={[{ required: true, message: '请选择角色' }]}
                     >
                         <Radio.Group>
-                            <Radio value="user">用户</Radio>
-                            <Radio value="admin">管理员</Radio>
+                            <Radio value={USER_ROLE.USER}>用户</Radio>
+                            <Radio value={USER_ROLE.ADMIN}>管理员</Radio>
                         </Radio.Group>
 
                     </Form.Item>

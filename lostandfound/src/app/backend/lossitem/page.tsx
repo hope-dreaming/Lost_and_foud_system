@@ -63,7 +63,7 @@ export default function Lossitem() {
         },
 
     ];
-    const columns = user?.info?.role === USER_ROLE.USER ? START_columns : [
+    const columns = user?.role === USER_ROLE.USER ? START_columns : [
         ...START_columns,
         {
             title: '操作',
@@ -112,8 +112,8 @@ export default function Lossitem() {
                 pageSize: pagination.pageSize as number,
                 item_name,
                 item_type,
-                role: user?.info?.role,
-                userId: user?.info?.uid,
+                role: user?.role,
+                userId: user?.uid,
             }).then((res) => {
                 setData(res.data);
                 console.log(res)
@@ -121,7 +121,7 @@ export default function Lossitem() {
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [pagination, user?.info?.role]
+        [pagination, user?.role]
     );
 
     useEffect(() => {

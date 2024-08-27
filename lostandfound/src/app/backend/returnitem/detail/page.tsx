@@ -93,9 +93,9 @@ export default function Returnitemdetail() {
                 item_fid,
                 item_tele,
                 item_uaid,
-                role: user?.info?.role,
+                role: user?.role,
                 isok,
-                userId: user?.info?.tele
+                userId: user?.tele
             }).then((res) => {
                 setData(res.data);
                 console.log(res)
@@ -103,7 +103,7 @@ export default function Returnitemdetail() {
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [pagination, user?.info?.role]
+        [pagination, user?.role]
     );
 
     useEffect(() => {

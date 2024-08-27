@@ -44,14 +44,14 @@ const login = async (req, res) => {
         const token = jwt.sign(
             { id: findUser.uid },
             JWT_SECRET,
-            { expiresIn: "1h" }
+            { expiresIn: "24h" }
         )
         return res.send({
             status: 200,
             message: "登录成功",
             sucess: true,
             data: {
-                userId: findUser.uid,
+                uid: findUser.uid,
                 tele: findUser.tele,
                 name: findUser.name,
                 uno: findUser.uno,

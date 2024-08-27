@@ -73,7 +73,7 @@ export default function Lossitem() {
 
     ];
 
-    const columns = user?.info?.role === USER_ROLE.ADMIN ? [
+    const columns = user?.role === USER_ROLE.ADMIN ? [
         ...START_columns,
         {
             title: '操作',
@@ -136,7 +136,7 @@ export default function Lossitem() {
                 pageSize: pagination.pageSize as number,
                 item_name,
                 item_type,
-                userId: user?.info?.uid
+                userId: user?.uid
             }).then((res) => {
                 setData(res.data);
                 // console.log(res)

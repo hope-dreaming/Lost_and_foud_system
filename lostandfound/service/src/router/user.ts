@@ -17,15 +17,17 @@ const queryUserList = async (req, res) => {
             where: whereUserList,
         })
         if (!userList)
-            return res.send({ status: 401, message: '无用户', data: null })
+            return res.send({ status: 200, message: '无用户', data: null })
+        console.log(userList)
         res.send({
             status: 200,
             message: '查询成功',
             data: userList,
+
         })
     }
     catch (e) {
-        res.send({ status: 401, message: e.message, data: null })
+        res.send({ status: 200, message: e.message, data: null })
     }
 }
 
@@ -33,24 +35,27 @@ const queryUserList = async (req, res) => {
 const queryUserInfo = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
-        const { userId } = req.body
-        const userInfo = User.findOne({
+        const { id } = req.body
+        if (!id)
+            return res.send({ status: 200, message: '查询失败111', data: null })
+        const userInfo = await User.findOne({
             where: {
-                uid: userId,
+                uid: id as number,
             }
         })
         if (!userInfo)
-            return res.send({ status: 401, message: '无此用户', data: null })
-        return res.send({
+            return res.send({ status: 200, message: '无此用户', data: null })
+        res.send({
             status: 200,
             message: '查询成功',
             data: userInfo,
         })
     }
     catch (e) {
-        res.send({ status: 401, message: e.message, data: null })
+        res.send({ status: 200, message: e.message, data: null })
     }
 }
+
 
 // 添加单个用户信息
 const addUserInfo = async (req, res) => {
@@ -68,7 +73,7 @@ const addUserInfo = async (req, res) => {
         res.send({ status: 200, message: '添加成功', data: null })
     }
     catch (e) {
-        res.send({ status: 401, message: e.message, data: null })
+        res.send({ status: 200, message: e.message, data: null })
     }
 }
 
@@ -92,7 +97,7 @@ const updateUserInfo = async (req, res) => {
         res.send({ status: 200, message: '更新成功', data: null })
     }
     catch (e) {
-        res.send({ status: 401, message: e.message, data: null })
+        res.send({ status: 200, message: e.message, data: null })
     }
 
 }
