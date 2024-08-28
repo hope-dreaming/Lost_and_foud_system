@@ -2,8 +2,8 @@ import express from 'express'
 import { addUserInfo, deleteUserInfo, queryUserInfo, queryUserList, updateUserInfo, updateUserSatus } from './user'
 import { login } from './login'
 import { addReturnitem, deleteReturnitem, queryReturnitemList, updateReturnitem } from './returnitem'
-import { addFoundItem, deleteFoundItem, queryFoundItemInfo, queryFoundItemList, queryFountitemType, queryOneFoundItem, updateFoundItem } from './founditem'
-import { queryLossItemList, queryLossItemInfo, addLossItem, updateLossItem, deleteLossItem, queryLossItemType, queryOneLossItem } from './lossitem'
+import { addFoundItem, deleteFoundItem, editFoundItemStatus, queryFoundItemInfo, queryFoundItemList, queryFountitemType, queryOneFoundItem, updateFoundItem } from './founditem'
+import { queryLossItemList, queryLossItemInfo, addLossItem, updateLossItem, deleteLossItem, queryLossItemType, queryOneLossItem, editLossItemStatus } from './lossitem'
 
 const router = express.Router()
 
@@ -26,6 +26,7 @@ router.get('/queryLossItemType', queryLossItemType)
 
 router.post('/queryOneLossItem', queryOneLossItem)
 
+router.post('/editLossItemStatus', editLossItemStatus)
 
 // 失物信息
 
@@ -42,6 +43,8 @@ router.post('/deleteFoundItem', deleteFoundItem)
 router.get('/queryFountitemType', queryFountitemType)
 
 router.post('/queryOneFoundItem', queryOneFoundItem)
+
+router.post('/editFoundItemStatus', editFoundItemStatus)
 
 // 归还记录
 

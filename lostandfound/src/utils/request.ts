@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-'use client'
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios"
 import { message as Antdmessage } from "antd"
 // import { useRouter } from "next/navigation"
@@ -20,7 +19,7 @@ interface AxiosInstanceType extends AxiosInstance {
 
 export const CreateAxiosInstance = (config?: AxiosRequestConfig): AxiosInstanceType => {
     const instance = axios.create({
-        timeout: 5000,
+        timeout: 100000,
         ...config
     })
     // const router = useRouter()
@@ -62,4 +61,5 @@ export const CreateAxiosInstance = (config?: AxiosRequestConfig): AxiosInstanceT
     return instance
 }
 
-export default CreateAxiosInstance({})
+const request = CreateAxiosInstance({});
+export default request

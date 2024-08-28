@@ -77,14 +77,14 @@ const queryOneLossItem = async (req, res) => {
     try {
         const { id } = req.body
         if (!id)
-            return res.send({ status: 200, message: '无该物品信息', data: null })
+            return res.send({ status: 200, message: '无该物品信息', data: null, sucess: false })
         const LossitemInfo = await Lossitem.findOne({
             where: {
                 lid: id
             },
         })
         if (!LossitemInfo)
-            return res.send({ status: 200, message: '无寻物信息', data: null })
+            return res.send({ status: 200, message: '无寻物信息', data: null, sucess: false })
         const { uid } = LossitemInfo
         const user = await User.findOne({
             where: { uid },
@@ -93,6 +93,7 @@ const queryOneLossItem = async (req, res) => {
         return res.send({
             status: 200,
             message: '查询成功',
+            sucess: true,
             data: {
                 ...LossitemInfo.toJSON(),
                 tele: user.tele,
@@ -100,7 +101,7 @@ const queryOneLossItem = async (req, res) => {
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 
 }
@@ -117,14 +118,15 @@ const addLossItem = async (req, res) => {
             uid,
         })
         if (!lossitem)
-            return res.send({ status: 200, message: '添加寻物信息失败' })
+            return res.send({ status: 200, message: '添加寻物信息失败', sucess: false })
         return res.send({
             status: 200,
             message: '添加成功',
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, msg: '添加寻物信息失败' })
+        return res.send({ status: 200, msg: '添加寻物信息失败', sucess: false })
     }
 }
 
@@ -147,13 +149,14 @@ const updateLossItem = async (req, res) => {
             }
         )
 
-        res.send({
+        return res.send({
             status: 200,
             message: '修改成功',
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: '修改寻物信息失败' })
+        return res.send({ status: 200, message: '修改寻物信息失败', sucess: false })
     }
 
 }
@@ -161,16 +164,21 @@ const updateLossItem = async (req, res) => {
 // 删除寻物信息
 const deleteLossItem = async (req, res) => {
     try {
-        const { lid } = req.body
+        const { id } = req.body
         await Lossitem.destroy({
             where: {
-                lid,
+                lid: id,
             },
         })
 
+        return res.send({
+            status: 200,
+            message: '删除成功',
+            sucess: true
+        })
     }
     catch (e) {
-        return res.send({ status: 200, msg: '添加失物信息失败' })
+        return res.send({ status: 200, message: '删除失物信息失败', sucess: false })
     }
 }
 
@@ -181,7 +189,7 @@ const queryLossItemType = async (req, res) => {
             attributes: ['type'],
         })
         if (!lossitemType)
-            return res.send({ status: 200, msg: '无失物类型' })
+            return res.send({ status: 200, message: '无失物类型', sucess: false })
 
         const uniqueTypes = new Set(lossitemType.map(item => item.type));
 
@@ -191,11 +199,12 @@ const queryLossItemType = async (req, res) => {
         return res.send({
             status: 200,
             msg: '查询成功',
-            data: data
+            data: data,
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, msg: '查询失败' })
+        return res.send({ status: 200, message: '查询失败', sucess: false })
     }
 }
 
@@ -211,9 +220,10 @@ const editLossItemStatus = async (req, res) => {
                     lid,
                 },
             })
+        return res.send({ status: 200, message: '修改成功', sucess: true })
     }
     catch (e) {
-        return res.send({ status: 200, msg: '修改失物信息状态失败' })
+        return res.send({ status: 200, message: '修改失物信息状态失败', sucess: false })
     }
 }
 
@@ -225,4 +235,5 @@ export {
     deleteLossItem,
     queryLossItemType,
     queryOneLossItem,
+    editLossItemStatus,
 }

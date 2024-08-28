@@ -30,14 +30,15 @@ export async function updateUserInfo(params?: any) {
     return res
 };
 
+// 0 const { id } = req.body
 export async function deleteUserInfo(params?: any) {
     const url = "/api/deleteUserInfo";
     const res = await request.post(url, params);
     return res
 };
 
-updateUserSatus
 
+// 0  const { uid, status } = req.body
 export async function updateUserSatus(params?: any) {
     const url = "/api/updateUserSatus";
     const res = await request.post(url, params);

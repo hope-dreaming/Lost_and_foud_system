@@ -1,7 +1,9 @@
+import { message } from "antd"
+import { Op } from "sequelize"
 import { Founditem } from "src/database/models/founditem"
 import { User } from "src/database/models/user"
 
-// 查询所有失物信息
+// 查询未处理的/被驳回的所有失物信息
 const queryFoundItemList = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
@@ -9,7 +11,7 @@ const queryFoundItemList = async (req, res) => {
         const whereFounditem = {
             ...((item_name !== null && item_name !== undefined && item_name !== '') ? { name: item_name } : {}),
             ...((item_type !== null && item_type !== undefined && item_type !== '') ? { type: item_type } : {}),
-            isreturn: 0,
+            isreturn: { [Op.in]: [0, 2] },
         }
         const founditemList = await Founditem.findAll({
             where: whereFounditem,
@@ -123,14 +125,15 @@ const addFoundItem = async (req, res) => {
             isreturn: 2,
         })
         if (!founditem)
-            return res.send({ status: 200, msg: '添加失物信息失败' })
+            return res.send({ status: 200, message: '添加失物信息失败', sucess: false })
         return res.send({
             status: 200,
-            msg: '添加成功',
+            message: '添加成功',
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, msg: '添加失物信息失败' })
+        return res.send({ status: 200, message: '添加失物信息失败', sucess: false })
     }
 
 }
@@ -154,30 +157,33 @@ const updateFoundItem = async (req, res) => {
             }
         )
         if (!founditem)
-            return res.send({ status: 200, msg: '更新失物信息失败' })
+            return res.send({ status: 200, message: '更新失物信息失败', sucess: false })
         return res.send({
             status: 200,
-            msg: '更新成功',
+            message: '更新成功',
+            sucess: true,
         })
     }
     catch (e) {
-        return res.send({ status: 200, msg: '更新信息失败' })
+        return res.send({ status: 200, message: '更新信息失败', sucess: false })
+
     }
 }
 
 // 删除失物信息
 const deleteFoundItem = async (req, res) => {
     try {
-        const { fid } = req.body
+        const { id } = req.body
         await Founditem.destroy({
             where: {
-                fid,
+                fid: id,
             },
         })
+        return res.send({ status: 200, message: '删除成功', sucess: true })
 
     }
     catch (e) {
-        return res.send({ status: 200, msg: '添加失物信息失败' })
+        return res.send({ status: 200, message: '删除失物信息失败', sucess: false })
     }
 }
 
@@ -218,9 +224,15 @@ const editFoundItemStatus = async (req, res) => {
                     fid,
                 },
             })
+
+        return res.send({
+            status: 200,
+            message: '修改成功',
+            sucess: true
+        })
     }
     catch (e) {
-        return res.send({ status: 200, msg: '修改失物状态失败' })
+        return res.send({ status: 200, message: '修改失物状态失败', sucess: false })
     }
 }
 

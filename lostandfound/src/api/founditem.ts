@@ -1,5 +1,5 @@
 import qs from "qs"
-import { FounditemOneQueryType, FounditemQuery, FounditemType } from "@/types"
+import { DeleteType, FounditemOneQueryType, FounditemQuery, FounditemType } from "@/types"
 import request from "@/utils/request";
 
 export async function getFoundItemList(params?: FounditemQuery) {
@@ -25,6 +25,7 @@ export async function addFoundItem(params?: any) {
     return res
 }
 
+// 更新失物信息
 export async function updateFoundItem(params?: any) {
     const url = "/api/updateFoundItem";
     const res = await request.post(url, params);
@@ -39,13 +40,15 @@ export async function getOneFoundItem(params: FounditemOneQueryType) {
     return res
 }
 
-export async function deleteFoundItem(params?: any) {
+// 0 const { id } = req.body
+export async function deleteFoundItem(params: DeleteType) {
     const url = "/api/deleteFoundItem";
     const res = await request.post(url, params);
 
     return res
 }
 
+// 0 
 export async function getFountitemType(params?: any) {
     const url = "/api/queryFountitemType";
     const res = await request.get(url);
@@ -53,3 +56,10 @@ export async function getFountitemType(params?: any) {
     return res
 }
 
+// 0 const { fid, status } = req.body
+export async function editFoundItemStatus(params: DeleteType) {
+    const url = "/api/editFoundItemStatus";
+    const res = await request.post(url, params);
+
+    return res
+}

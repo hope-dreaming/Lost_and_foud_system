@@ -152,13 +152,14 @@ export default function Lossitem() {
     }, [fetchData, pagination]);
 
     const handleDelete = (id: number) => {
+        const params = { id };
         Modal.confirm({
             title: "确认删除？",
             okText: "确定",
             cancelText: "取消",
             async onOk() {
                 try {
-                    await deleteFoundItem(id);
+                    await deleteFoundItem(params);
                     message.success("删除成功");
                     fetchData(form.getFieldsValue());
                 } catch (error) {

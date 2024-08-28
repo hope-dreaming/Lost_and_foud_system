@@ -15,7 +15,7 @@ const Returnitem = sequelize.define('returnitems', {
         allowNull: false,
     },
     isok: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     uid: {
@@ -28,7 +28,7 @@ const Returnitem = sequelize.define('returnitems', {
     },
     uaid: {
         type: DataTypes.BIGINT,
-        allowNull: false,
+        allowNull: true,
         references: {
             model: User,
             key: 'uid',

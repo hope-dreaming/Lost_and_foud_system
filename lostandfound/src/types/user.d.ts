@@ -58,3 +58,7 @@ export interface UserFormProps {
     title: string;
     editData?: UserEditInfoType;
 }
+
+export interface DeleteType {
+    id: number;
+}

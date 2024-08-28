@@ -30,7 +30,7 @@ const Lossitem = sequelize.define('lossitems', {
         allowNull: true,
     },
     isfound: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: false,
     },

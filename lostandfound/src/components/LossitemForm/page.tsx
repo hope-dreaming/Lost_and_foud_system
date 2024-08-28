@@ -62,7 +62,7 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({
                 console.log(values);
                 await updateLossItemInform({
                     ...values,
-                    lid: editData.lid,
+                    // lid: editData.lid,
                 });
                 message.success("更新成功");
             } else {

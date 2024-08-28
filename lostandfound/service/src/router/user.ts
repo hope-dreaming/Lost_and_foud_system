@@ -1,6 +1,8 @@
 import { sequelize } from "src/database/init";
 import { User } from '../database/models/user'
 import { message } from "antd";
+import { Lossitem } from "src/database/models/lossitem";
+import { Founditem } from "src/database/models/founditem";
 
 // 查询所有用户信息列表
 const queryUserList = async (req, res) => {
@@ -18,8 +20,8 @@ const queryUserList = async (req, res) => {
         })
         if (!userList)
             return res.send({ status: 200, message: '无用户', data: null })
-        console.log(userList)
-        res.send({
+        // console.log(userList)
+        return res.send({
             status: 200,
             message: '查询成功',
             data: userList,
@@ -27,7 +29,7 @@ const queryUserList = async (req, res) => {
         })
     }
     catch (e) {
-        res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null })
     }
 }
 
@@ -45,14 +47,14 @@ const queryUserInfo = async (req, res) => {
         })
         if (!userInfo)
             return res.send({ status: 200, message: '无此用户', data: null })
-        res.send({
+        return res.send({
             status: 200,
             message: '查询成功',
             data: userInfo,
         })
     }
     catch (e) {
-        res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null })
     }
 }
 
@@ -70,10 +72,10 @@ const addUserInfo = async (req, res) => {
             role,
             status: 1,
         })
-        res.send({ status: 200, message: '添加成功', data: null })
+        return res.send({ status: 200, message: '添加成功', data: null, sucess: true })
     }
     catch (e) {
-        res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 }
 
@@ -81,6 +83,9 @@ const addUserInfo = async (req, res) => {
 const updateUserInfo = async (req, res) => {
     try {
         const { tele, name, password, uno, sexy, role, uid } = req.body
+        if (!uid)
+            return res.send({ status: 200, message: '更新失败', data: null, sucess: false })
+
         await User.update({
             tele,
             name,
@@ -94,10 +99,10 @@ const updateUserInfo = async (req, res) => {
                     uid,
                 }
             })
-        res.send({ status: 200, message: '更新成功', data: null })
+        return res.send({ status: 200, message: '更新成功', data: null, sucess: true })
     }
     catch (e) {
-        res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 
 }
@@ -106,10 +111,60 @@ const updateUserInfo = async (req, res) => {
 // 删除单个信息的同时应删除其所有寻物信息，失物招领信息，物品领取审核记录
 const deleteUserInfo = async (req, res) => {
 
+    try {
+        const { id } = req.body
+
+        if (!id)
+            return res.send({ status: 200, message: '参数错误', data: null, sucess: false })
+
+        await sequelize.transaction(async (t) => {
+
+            await User.destroy({
+                where: { uid: id },
+            }, { transaction: t })
+
+            await Lossitem.destroy({
+                where: { uid: id },
+            }, { transaction: t })
+
+            await Founditem.destroy({
+                where: { uid: id },
+            }, { transaction: t })
+        })
+        return res.send({
+            status: 200,
+            message: '删除成功',
+            data: null,
+            sucess: true
+        })
+
+    }
+    catch (e) {
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
+    }
 }
 
 // 更新用户启用状态
 const updateUserSatus = async (req, res) => {
+    try {
+        const { uid, status } = req.body
+
+        if (!uid || !status)
+            return res.send({ status: 200, message: '参数错误', data: null, sucess: false })
+
+        await User.update({
+            status,
+        }, {
+            where: { uid, },
+        })
+
+        return res.send({ status: 200, message: '更新成功', data: null, sucess: true })
+
+
+    }
+    catch (e) {
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
+    }
 }
 
 

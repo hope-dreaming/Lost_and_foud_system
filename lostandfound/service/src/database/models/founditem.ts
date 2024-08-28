@@ -30,7 +30,7 @@ const Founditem = sequelize.define('founditems', {
         allowNull: true,
     },
     isreturn: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: false,
     },

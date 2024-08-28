@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
 import { Op } from 'sequelize'
+import { sequelize } from 'src/database/init'
+import { Founditem } from 'src/database/models/founditem'
 import { Returnitem } from 'src/database/models/returnitem'
 import { User } from 'src/database/models/user'
 
@@ -20,7 +22,7 @@ const queryReturnitemList = async (req, res) => {
         })
 
         if (!returnitemList)
-            res.send({ status: 200, message: '查询失败', data: null })
+            return res.send({ status: 200, message: '查询失败', data: null })
 
         const result = []
         for (const list of returnitemList) {
@@ -35,7 +37,7 @@ const queryReturnitemList = async (req, res) => {
             })
         }
 
-        res.send({
+        return res.send({
             status: 200,
             message: '查询成功',
             data: result,
@@ -49,65 +51,92 @@ const queryReturnitemList = async (req, res) => {
 // 增加申请
 const addReturnitem = async (req, res) => {
     try {
-        const { uid, uaid, date, fid } = req.body
+        const { uid, date, fid } = req.body
         const returnitem = await Returnitem.create({
             uid,
-            uaid,
             date,
             fid,
         })
         if (!returnitem)
-            res.send({ status: 200, message: '申请失败', data: null })
+            return res.send({ status: 200, message: '申请失败', data: null, sucess: false })
 
-        res.send({
+        return res.send({
             status: 200,
             message: '申请成功',
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 }
 
-// 修改申请
-// 审核申请的同时，如果审核通过，则审核物品为归还状态isfound=1,否则不做修改
+// 审核申请
+// 审核申请的同时，如果审核通过，则审核物品为归还状态isreturn=1,否则不做修改
 const updateReturnitem = async (req, res) => {
     try {
-        const { isok, rid } = req.body
-        const returnitem = await Returnitem.update({
-            isok,
-        }, {
-            where: { rid },
+        const { isok, rid, uaid, fid } = req.body
+
+        if (!isok || !rid || !uaid || !fid)
+            return res.send({
+                status: 200,
+                message: '参数错误',
+                sucess: false,
+            })
+
+        await sequelize.transaction(async (t) => {
+            const result = await Returnitem.update({
+                isok,
+                uaid,
+            }, {
+                where: { rid, },
+            }, { transaction: t })
+
+
+            if (isok === 1) {
+                await Founditem.update({
+                    isreturn: 1,
+                }, {
+                    where: { fid, },
+                }, { transaction: t })
+            }
+
+            return result
         })
-        if (!returnitem)
-            res.send({ status: 200, message: '审核失败', data: null })
-        res.send({
+
+        return res.send({
             status: 200,
             message: '审核成功',
+            sucess: true,
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 }
 
-// 删除记录
+// 删除申请记录
 const deleteReturnitem = async (req, res) => {
     try {
-        const { rid } = req.body
+        const { id } = req.body
+
+        if (!id)
+            return res.send({ status: 200, message: '参数错误', data: null, sucess: false })
+
         const returnitem = await Returnitem.destroy({
-            where: { rid },
+            where: { rid: id, },
         })
         if (!returnitem)
-            res.send({ status: 200, message: '删除失败', data: null })
+            return res.send({ status: 200, message: '删除失败', data: null, sucess: false })
 
-        res.send({
+        return res.send({
             status: 200,
             message: '删除成功',
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 }
 
