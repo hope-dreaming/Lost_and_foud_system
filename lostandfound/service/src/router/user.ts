@@ -3,6 +3,8 @@ import { User } from '../database/models/user'
 import { message } from "antd";
 import { Lossitem } from "src/database/models/lossitem";
 import { Founditem } from "src/database/models/founditem";
+import { Returnitem } from "src/database/models/returnitem";
+import { Op } from "sequelize";
 
 // 查询所有用户信息列表
 const queryUserList = async (req, res) => {
@@ -119,17 +121,64 @@ const deleteUserInfo = async (req, res) => {
 
         await sequelize.transaction(async (t) => {
 
+            const lossitem = await Lossitem.findAll({
+                where: { uid: id },
+            }, { transaction: t })
+
+            if (lossitem.length > 0 && !lossitem) {
+                await Lossitem.destroy({
+                    where: { uid: id },
+                }, { transaction: t })
+            }
+            const userid_returnitem = await Returnitem.findAll({
+                where: {
+                    [Op.or]: [
+                        { uid: id }, { uaid: id }
+                    ]
+                },
+            }, { transaction: t })
+
+            if (userid_returnitem.length > 0 && !userid_returnitem) {
+
+                for (const ritem of userid_returnitem) {
+                    await Returnitem.destroy({
+                        where: { rid: ritem.rid }
+                    }, { transaction: t })
+                }
+
+            }
+
+            const founditem = await Founditem.findAll({
+                where: { uid: id },
+            }, { transaction: t })
+
+            if (founditem.length > 0 && !founditem) {
+
+                for (const fitem of founditem) {
+                    const returnitem = await Returnitem.findAll({
+                        where: {
+                            fid: fitem.fid,
+                        }
+                    }, { transaction: t })
+
+                    if (returnitem.length > 0 && !returnitem) {
+                        await Returnitem.destroy({
+                            where: { fid: fitem.rid },
+                        }, { transaction: t })
+                    }
+                }
+
+                await Founditem.destroy({
+                    where: { uid: id },
+                }, { transaction: t })
+
+            }
+
+
             await User.destroy({
                 where: { uid: id },
             }, { transaction: t })
 
-            await Lossitem.destroy({
-                where: { uid: id },
-            }, { transaction: t })
-
-            await Founditem.destroy({
-                where: { uid: id },
-            }, { transaction: t })
         })
         return res.send({
             status: 200,

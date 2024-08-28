@@ -1,6 +1,8 @@
 import { message } from "antd"
 import { Op } from "sequelize"
+import { sequelize } from "src/database/init"
 import { Founditem } from "src/database/models/founditem"
+import { Returnitem } from "src/database/models/returnitem"
 import { User } from "src/database/models/user"
 
 // 查询未处理的/被驳回的所有失物信息
@@ -174,11 +176,34 @@ const updateFoundItem = async (req, res) => {
 const deleteFoundItem = async (req, res) => {
     try {
         const { id } = req.body
-        await Founditem.destroy({
-            where: {
-                fid: id,
-            },
+        if (!id)
+            return res.send({ status: 200, message: '参数错误', sucess: false })
+
+        await sequelize.transaction(async (t) => {
+
+            const returnitem = await Returnitem.findAll({
+                where: {
+                    fid: id,
+                },
+            }, { transaction: t })
+
+            if (returnitem.length > 0 && !returnitem) {
+
+                await Returnitem.destroy({
+                    where: {
+                        fid: id,
+                    },
+                }, { transaction: t })
+
+            }
+
+            await Founditem.destroy({
+                where: {
+                    fid: id,
+                },
+            })
         })
+
         return res.send({ status: 200, message: '删除成功', sucess: true })
 
     }
