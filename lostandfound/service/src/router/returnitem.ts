@@ -107,14 +107,21 @@ const queryUserReturnitemList = async (req, res) => {
 const addReturnitem = async (req, res) => {
     try {
         const { uid, date, fid } = req.body
-        const returnitem = await Returnitem.create({
-            uid,
-            date,
-            fid,
-        })
-        if (!returnitem)
-            return res.send({ status: 200, message: '申请失败', data: null, sucess: false })
 
+        await sequelize.transaction(async (t) => {
+            await Returnitem.create({
+                uid,
+                date,
+                fid,
+            }, { transaction: t })
+
+            const result = await Founditem.update({
+                isreturn: 2,
+            }, { where: { fid, }, },
+                { transaction: t })
+
+            return result
+        })
         return res.send({
             status: 200,
             message: '申请成功',
@@ -122,7 +129,7 @@ const addReturnitem = async (req, res) => {
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null, sucess: false })
+        return res.send({ status: 200, message: '申请失败', data: null, sucess: false })
     }
 }
 

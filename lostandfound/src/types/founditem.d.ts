@@ -1,3 +1,5 @@
+import { USER_ROLE } from "@/constants";
+
 // 拾物信息类型
 export interface FounditemType {
     name: string;
@@ -33,6 +35,7 @@ export interface FounditemQuery {
     item_name?: string;
     item_type?: string;
     userId?: number;
+    role?: USER_ROLE;
 
 }
 

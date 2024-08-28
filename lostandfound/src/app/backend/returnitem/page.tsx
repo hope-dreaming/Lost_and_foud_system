@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tooltip } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
@@ -26,7 +26,7 @@ export default function Returnitem() {
     else if (pathname === '/backend/returnitem/detail')
         isok = 4
 
-    const columns = [
+    const START_columns = [
         {
             title: '领取人账号',
             dataIndex: 'tele',
@@ -45,6 +45,9 @@ export default function Returnitem() {
             key: 'fid',
             align: 'center',
         },
+    ];
+    const columns = user?.role === USER_ROLE.ADMIN ? [
+        ...START_columns,
         {
             title: '操作',
             dataIndex: 'action',
@@ -75,7 +78,18 @@ export default function Returnitem() {
             ),
 
         }
-    ];
+    ] : [
+        ...START_columns,
+        {
+            title: '状态',
+            dataIndex: 'isok',
+            key: 'isok',
+            align: 'center',
+            render: () => (
+                <Tag color="green">未处理</Tag>)
+            ,
+        },
+    ]
     const [total, setTotal] = useState(0);
     const [data, setData] = useState([])
 

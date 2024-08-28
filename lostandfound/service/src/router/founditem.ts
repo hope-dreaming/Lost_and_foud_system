@@ -122,7 +122,7 @@ const addFoundItem = async (req, res) => {
             place,
             desc,
             uid,
-            isreturn: 2,
+            isreturn: 0,
         })
         if (!founditem)
             return res.send({ status: 200, message: '添加失物信息失败', sucess: false })

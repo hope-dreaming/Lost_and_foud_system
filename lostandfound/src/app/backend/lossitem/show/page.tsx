@@ -8,7 +8,7 @@ import { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { LossitemQuery } from '@/types';
 import Content from '@/components/Content';
 import { useCurrentUser } from '@/utils/hoos';
-import { deleteLossItem, editLossItemStatus, getLossItemList } from '@/api';
+import { deleteLossItem, editLossItemStatus, getLossItemList, getLostItemInfo } from '@/api';
 import { useRouter } from 'next/navigation';
 
 export default function Lossitem() {
@@ -139,7 +139,7 @@ export default function Lossitem() {
     const fetchData = useCallback(
         (search?: LossitemQuery) => {
             const { item_name, item_type } = search || {};
-            getLossItemList({
+            getLostItemInfo({
                 current: pagination.current as number,
                 pageSize: pagination.pageSize as number,
                 item_name,

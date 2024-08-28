@@ -1,4 +1,4 @@
-import { UserOneQueryType, UserQueryType, UserType } from "@/types";
+import { DeleteType, UserOneQueryType, UserQueryType, UserType } from "@/types";
 import request from "@/utils/request";
 import qs from "qs";
 
@@ -31,7 +31,7 @@ export async function updateUserInfo(params?: any) {
 };
 
 // 0 const { id } = req.body
-export async function deleteUserInfo(params?: any) {
+export async function deleteUserInfo(params: DeleteType) {
     const url = "/api/deleteUserInfo";
     const res = await request.post(url, params);
     return res

@@ -6,6 +6,7 @@ export interface LossitemQuery {
     role?: USER_ROLE;
     userId?: number;
     lid?: number;
+    role?: USER_ROLE;
 }
 
 export interface LossitemType {

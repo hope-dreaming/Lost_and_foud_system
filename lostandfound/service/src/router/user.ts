@@ -149,7 +149,7 @@ const updateUserSatus = async (req, res) => {
     try {
         const { uid, status } = req.body
 
-        if (!uid || !status)
+        if (!uid || (status !== 1 && status !== 0))
             return res.send({ status: 200, message: '参数错误', data: null, sucess: false })
 
         await User.update({

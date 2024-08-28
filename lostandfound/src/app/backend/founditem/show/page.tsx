@@ -5,10 +5,10 @@ import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, Tabl
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import { LossitemQuery } from '@/types';
+import { FounditemQuery, LossitemQuery } from '@/types';
 import Content from '@/components/Content';
 import { useCurrentUser } from '@/utils/hoos';
-import { deleteFoundItem, getLossItemList } from '@/api';
+import { deleteFoundItem, getFoundItemInfo, } from '@/api';
 import { useRouter } from 'next/navigation';
 
 export default function Lossitem() {
@@ -81,7 +81,7 @@ export default function Lossitem() {
                 <Flex>
                     <Space size="middle">
 
-                        <Button type="primary" ghost onClick={() => { router.push(`/backend/founditem/edit/${record.fid}`) }}>编辑</Button>
+                        {record.isreturn === 1 ? null : (<Button type="primary" ghost onClick={() => { router.push(`/backend/founditem/edit/${record.fid}`) }}>编辑</Button>)}
                         <Button type="primary" danger ghost onClick={() => { handleDelete(record.fid as number) }}>删除</Button>
 
                     </Space>
@@ -122,9 +122,9 @@ export default function Lossitem() {
     }
 
     const fetchData = useCallback(
-        (search?: LossitemQuery) => {
+        (search?: FounditemQuery) => {
             const { item_name, item_type } = search || {};
-            getLossItemList({
+            getFoundItemInfo({
                 current: pagination.current as number,
                 pageSize: pagination.pageSize as number,
                 item_name,
