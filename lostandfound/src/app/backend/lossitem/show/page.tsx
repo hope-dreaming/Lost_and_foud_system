@@ -1,19 +1,28 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { LossitemQuery } from '@/types';
 import Content from '@/components/Content';
 import { useCurrentUser } from '@/utils/hoos';
-import { getLossItemList } from '@/api';
+import { deleteLossItem, editLossItemStatus, getLossItemList } from '@/api';
+import { useRouter } from 'next/navigation';
 
 export default function Lossitem() {
 
     const [form] = Form.useForm();
     const user = useCurrentUser();
+    const [total, setTotal] = useState(0);
+    const [data, setData] = useState([])
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 20,
+        showSizeChanger: true,
+    })
+    const router = useRouter();
 
     const columns = [
         {
@@ -71,10 +80,9 @@ export default function Lossitem() {
             render: (_: any, record: any) => (
                 <Flex>
                     <Space size="middle">
-
-                        <Button type="primary" ghost onClick={() => { }}>编辑</Button>
-                        <Button type="primary" onClick={() => { }}>已找回</Button>
-                        <Button type="primary" danger ghost onClick={() => { }}>删除</Button>
+                        {record.isfound === 0 ? (<Button type="primary" onClick={() => { handleFound(record.lid as number, record.isfound as number) }}>已找回</Button>) : null}
+                        <Button type="primary" ghost onClick={() => { router.push(`/backend/lossitem/edit/${record.lid}`) }}>编辑</Button>
+                        <Button type="primary" danger ghost onClick={() => { handleDelete(record.lid as number) }}>删除</Button>
 
                     </Space>
                 </Flex>
@@ -82,14 +90,40 @@ export default function Lossitem() {
 
         }
     ];
-    const [total, setTotal] = useState(0);
-    const [data, setData] = useState([])
-
-    const [pagination, setPagination] = useState({
-        current: 1,
-        pageSize: 20,
-        showSizeChanger: true,
-    })
+    const handleFound = (id: number, isfound: number) => {
+        const params = { id, isfound }
+        Modal.confirm({
+            title: "确认删除？",
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                try {
+                    await editLossItemStatus(params);
+                    message.success("操作成功");
+                    fetchData(form.getFieldsValue());
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        });
+    };
+    const handleDelete = (id: number) => {
+        const params = { id }
+        Modal.confirm({
+            title: "确认删除？",
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                try {
+                    await deleteLossItem(params);
+                    message.success("删除成功");
+                    fetchData(form.getFieldsValue());
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        });
+    };
 
     const handleSearchFinish = async (values: LossitemQuery) => {
         console.log('Received values from form: ', values);

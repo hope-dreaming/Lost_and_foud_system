@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
@@ -11,14 +11,23 @@ import Content from '@/components/Content';
 import { getFoundItemList } from '@/api/founditem';
 import { useCurrentUser } from '@/utils/hoos';
 import { usePathname } from 'next/navigation';
-import { getReturnItemList } from '@/api';
+import { deleteReturnitem, getAdiminReturnitemList, getUserReturnitemList } from '@/api';
+import { USER_ROLE } from '@/constants';
 
 export default function Returnitemdetail() {
 
     const [form] = Form.useForm();
+    const [total, setTotal] = useState(0);
+    const [data, setData] = useState([])
 
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 20,
+        showSizeChanger: true,
+    })
     const user = useCurrentUser();
     const pathname = usePathname();
+
     let isok: number;
     if (pathname === '/backend/returnitem')
         isok = 2
@@ -62,17 +71,40 @@ export default function Returnitemdetail() {
                     <Tag color="red">驳回</Tag>
                 ),
         },
+        {
+            title: '操作',
+            dataIndex: 'action',
+            key: 'action',
+            align: 'center',
+            render: (_: any, record: any) => (
+                <Flex>
+                    <Space size="middle">
+                        <Button type="primary" danger ghost onClick={() => { handleDelete(record.rid as number) }}>删除</Button>
+                    </Space>
+                </Flex>
+            ),
+
+        }
 
     ];
-    const [total, setTotal] = useState(0);
-    const [data, setData] = useState([])
 
-    const [pagination, setPagination] = useState({
-        current: 1,
-        pageSize: 20,
-        showSizeChanger: true,
-    })
-
+    const handleDelete = (id: number) => {
+        const params = { id }
+        Modal.confirm({
+            title: "确认删除？",
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                try {
+                    await deleteReturnitem(params);
+                    message.success("删除成功");
+                    fetchData(form.getFieldsValue());
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        });
+    };
     const handleSearchFinish = async (values: ReturnitemQueryType) => {
         console.log('Received values from form: ', values);
         fetchData(values)
@@ -86,21 +118,36 @@ export default function Returnitemdetail() {
 
     const fetchData = useCallback(
         (search?: ReturnitemQueryType) => {
-            const { item_fid, item_tele, item_uaid } = search || {};
-            getReturnItemList({
-                current: pagination.current as number,
-                pageSize: pagination.pageSize as number,
-                item_fid,
-                item_tele,
-                item_uaid,
-                role: user?.role,
-                isok,
-                userId: user?.tele
-            }).then((res) => {
-                setData(res.data);
-                console.log(res)
-                setTotal(res.total);
-            });
+            if (user?.role === USER_ROLE.ADMIN) {
+                const { item_fid, item_tele, item_uaid } = search || {};
+                getAdiminReturnitemList({
+                    current: pagination.current as number,
+                    pageSize: pagination.pageSize as number,
+                    item_fid,
+                    item_tele,
+                    item_uaid,
+                    isok,
+                }).then((res) => {
+                    setData(res.data);
+                    console.log(res)
+                    setTotal(res.total);
+                });
+            } else if (user?.role === USER_ROLE.USER) {
+                const { item_fid, item_uaid } = search || {};
+                getUserReturnitemList({
+                    current: pagination.current as number,
+                    pageSize: pagination.pageSize as number,
+                    item_fid,
+                    isok,
+                    item_uaid,
+                    userId: user?.uid
+                }).then((res) => {
+                    setData(res.data);
+                    console.log(res)
+                    setTotal(res.total);
+                });
+            }
+
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [pagination, user?.role]
@@ -135,11 +182,11 @@ export default function Returnitemdetail() {
 
                 >
                     <Row gutter={24}>
-                        <Col span={5}>
-                            <Form.Item name="item_tele" label="领取人账号" >
-                                <Input placeholder='请输入领取人账号' />
+                        {user?.role === USER_ROLE.ADMIN ? (<Col span={5}>
+                            <Form.Item name="item_tele" label="申请账号" >
+                                <Input placeholder='请输入申请账号' />
                             </Form.Item>
-                        </Col>
+                        </Col>) : null}
                         <Col span={5}>
                             <Form.Item name="item_uaid" label="管理员账号" >
                                 <Input placeholder='请输入管理员账号' />

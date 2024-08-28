@@ -11,7 +11,7 @@ const queryFoundItemList = async (req, res) => {
         const whereFounditem = {
             ...((item_name !== null && item_name !== undefined && item_name !== '') ? { name: item_name } : {}),
             ...((item_type !== null && item_type !== undefined && item_type !== '') ? { type: item_type } : {}),
-            isreturn: { [Op.in]: [0, 2] },
+            isreturn: 0,
         }
         const founditemList = await Founditem.findAll({
             where: whereFounditem,

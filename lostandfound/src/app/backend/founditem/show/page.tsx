@@ -1,19 +1,28 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Flex, Form, Input, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
+import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
 import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
 import { LossitemQuery } from '@/types';
 import Content from '@/components/Content';
 import { useCurrentUser } from '@/utils/hoos';
-import { getLossItemList } from '@/api';
+import { deleteFoundItem, getLossItemList } from '@/api';
+import { useRouter } from 'next/navigation';
 
 export default function Lossitem() {
 
     const [form] = Form.useForm();
     const user = useCurrentUser();
+    const router = useRouter()
+    const [total, setTotal] = useState(0);
+    const [data, setData] = useState([])
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 20,
+        showSizeChanger: true,
+    })
 
     const columns = [
         {
@@ -72,8 +81,8 @@ export default function Lossitem() {
                 <Flex>
                     <Space size="middle">
 
-                        <Button type="primary" ghost onClick={() => { }}>编辑</Button>
-                        <Button type="primary" danger ghost onClick={() => { }}>删除</Button>
+                        <Button type="primary" ghost onClick={() => { router.push(`/backend/founditem/edit/${record.fid}`) }}>编辑</Button>
+                        <Button type="primary" danger ghost onClick={() => { handleDelete(record.fid as number) }}>删除</Button>
 
                     </Space>
                 </Flex>
@@ -81,14 +90,25 @@ export default function Lossitem() {
 
         }
     ];
-    const [total, setTotal] = useState(0);
-    const [data, setData] = useState([])
 
-    const [pagination, setPagination] = useState({
-        current: 1,
-        pageSize: 20,
-        showSizeChanger: true,
-    })
+
+    const handleDelete = (id: number) => {
+        const params = { id };
+        Modal.confirm({
+            title: "确认删除？",
+            okText: "确定",
+            cancelText: "取消",
+            async onOk() {
+                try {
+                    await deleteFoundItem(params);
+                    message.success("删除成功");
+                    fetchData(form.getFieldsValue());
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        });
+    };
 
     const handleSearchFinish = async (values: LossitemQuery) => {
         console.log('Received values from form: ', values);

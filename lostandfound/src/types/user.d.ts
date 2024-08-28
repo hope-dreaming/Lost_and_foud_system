@@ -33,7 +33,7 @@ export interface UserCurrentType {
     name: string;
     uno?: string;
     sexy: string;
-    role: string;
+    role: USER_ROLE;
 }
 
 export interface UserType {

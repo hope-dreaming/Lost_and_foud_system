@@ -9,10 +9,11 @@ import { getLossItemList } from '@/api/lossitem';
 import { LossitemQuery, ReturnitemQueryType } from '@/types';
 import Content from '@/components/Content';
 import { getFoundItemList } from '@/api/founditem';
-import { getReturnItemList, updateReturnitem } from '@/api';
+import { getAdiminReturnitemList, getUserReturnitemList, updateReturnitem } from '@/api';
 import { useCurrentUser } from '@/utils/hoos';
 import { usePathname } from 'next/navigation';
 import { RETURN_ISOK, USER_ROLE } from '@/constants';
+import { getArrowOffsetToken } from 'antd/es/style/placementArrow';
 
 export default function Returnitem() {
 
@@ -53,8 +54,21 @@ export default function Returnitem() {
                 <Flex>
                     <Space size="middle">
 
-                        <Button type="primary" ghost onClick={() => { handleTackle(record.rid as number, RETURN_ISOK.OK as number) }}>同意</Button>
-                        <Button type="primary" danger ghost onClick={() => { handleTackle(record.rid as number, RETURN_ISOK.NO as number) }}>驳回</Button>
+                        <Button type="primary" ghost
+                            onClick={
+                                () => {
+                                    handleTackle(record.rid as number, RETURN_ISOK.OK as number, user?.uid as number, record.fid as number)
+                                }}
+                        >
+                            同意
+                        </Button>
+                        <Button type="primary" danger ghost onClick={
+                            () => {
+                                handleTackle(record.rid as number, RETURN_ISOK.NO as number, user?.uid as number, record.fid as number)
+                            }}
+                        >
+                            驳回
+                        </Button>
 
                     </Space>
                 </Flex>
@@ -91,20 +105,34 @@ export default function Returnitem() {
 
     const fetchData = useCallback(
         (search?: ReturnitemQueryType) => {
-            const { item_fid, item_tele } = search || {};
-            getReturnItemList({
-                current: pagination.current as number,
-                pageSize: pagination.pageSize as number,
-                item_fid,
-                item_tele,
-                role: user?.role,
-                isok,
-                userId: user?.tele
-            }).then((res) => {
-                setData(res.data);
-                console.log(res)
-                setTotal(res.total);
-            });
+            if (user?.role === USER_ROLE.ADMIN) {
+                const { item_fid, item_tele } = search || {};
+                getAdiminReturnitemList({
+                    current: pagination.current as number,
+                    pageSize: pagination.pageSize as number,
+                    item_fid,
+                    item_tele,
+                    isok,
+                }).then((res) => {
+                    setData(res.data);
+                    console.log(res)
+                    setTotal(res.total);
+                });
+            } else if (user?.role === USER_ROLE.USER) {
+                const { item_fid } = search || {};
+                getUserReturnitemList({
+                    current: pagination.current as number,
+                    pageSize: pagination.pageSize as number,
+                    item_fid,
+                    isok,
+                    userId: user?.uid
+                }).then((res) => {
+                    setData(res.data);
+                    console.log(res)
+                    setTotal(res.total);
+                });
+            }
+
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [pagination, user?.role]
@@ -114,10 +142,12 @@ export default function Returnitem() {
         fetchData();
     }, [fetchData, pagination]);
 
-    const handleTackle = (id: number, isok: number) => {
+    const handleTackle = (rid: number, isok: number, uaid: number, fid: number) => {
         const params = {
+            rid,
             isok,
-            id,
+            uaid,
+            fid
         }
         if (isok === RETURN_ISOK.OK) {
             Modal.confirm({
@@ -173,11 +203,11 @@ export default function Returnitem() {
 
                 >
                     <Row gutter={19}>
-                        <Col span={5}>
+                        {user?.role === USER_ROLE.ADMIN ? (<Col span={5}>
                             <Form.Item name="item_tele" label="申请账号" >
                                 <Input placeholder='请输入申请账号' />
                             </Form.Item>
-                        </Col>
+                        </Col>) : null}
                         <Col span={5}>
                             <Form.Item name="item_fid" label="物品编号" >
                                 <Input placeholder='请输入物品编号' />

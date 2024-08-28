@@ -211,9 +211,9 @@ const queryLossItemType = async (req, res) => {
 // 修改寻物信息状态
 const editLossItemStatus = async (req, res) => {
     try {
-        const { lid, status } = req.body
+        const { lid, isfound } = req.body
         await Lossitem.update({
-            status,
+            isfound,
         },
             {
                 where: {
