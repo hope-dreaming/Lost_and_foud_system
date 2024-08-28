@@ -128,7 +128,12 @@ export default function RootLayout({
   const USER_ITEMS: MenuProps["items"] = [
     {
       key: "1",
-      label: <Link href="/backend/user">个人中心</Link>,
+      label:
+        (<span
+          onClick={() => { router.push(`/backend/user/edit/${user?.uid}`) }}
+        >
+          个人中心
+        </span>),
     },
     {
       key: "2",

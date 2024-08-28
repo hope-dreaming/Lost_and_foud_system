@@ -92,8 +92,8 @@ const UserLayout: React.FC<UserFormProps> = ({
 
                     >
                         {isEdit ? (<Select >
-                            <Option key={user?.tele} value={user?.tele}>
-                                {user?.tele}
+                            <Option key={editData?.tele} value={editData?.tele}>
+                                {editData?.tele}
                             </Option>
                         </Select>) : (<Input />)}
                     </Form.Item>
