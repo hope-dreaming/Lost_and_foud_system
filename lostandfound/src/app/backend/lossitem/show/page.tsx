@@ -10,6 +10,7 @@ import Content from '@/components/Content';
 import { useCurrentUser } from '@/utils/hoos';
 import { deleteLossItem, editLossItemStatus, getLossItemList, getLostItemInfo } from '@/api';
 import { useRouter } from 'next/navigation';
+import { USER_ROLE } from '@/constants';
 
 export default function Lossitem() {
 
@@ -80,7 +81,7 @@ export default function Lossitem() {
             render: (_: any, record: any) => (
                 <Flex>
                     <Space size="middle">
-                        {record.isfound === 0 ? (<Button type="primary" onClick={() => { handleFound(record.lid as number, record.isfound as number) }}>已找回</Button>) : null}
+                        {record.isfound === 0 ? (<Button type="primary" onClick={() => { handleFound(record.lid as number, 1 as number) }}>已找回</Button>) : null}
                         <Button type="primary" ghost onClick={() => { router.push(`/backend/lossitem/edit/${record.lid}`) }}>编辑</Button>
                         <Button type="primary" danger ghost onClick={() => { handleDelete(record.lid as number) }}>删除</Button>
 
@@ -90,11 +91,11 @@ export default function Lossitem() {
 
         }
     ];
-    const handleFound = (id: number, isfound: number) => {
-        const params = { id, isfound }
+    const handleFound = (lid: number, isfound: number) => {
+        const params = { lid, isfound }
         Modal.confirm({
-            title: "确认删除？",
-            okText: "确定",
+            title: "确认已经找回？",
+            okText: "确认",
             cancelText: "取消",
             async onOk() {
                 try {

@@ -105,11 +105,12 @@ const queryOneLossItem = async (req, res) => {
     }
 
 }
+///////////////////////////////
 // 添加寻物信息
 const addLossItem = async (req, res) => {
     try {
         const { name, type, date, place, desc, uid } = req.body
-        const lossitem = await Lossitem.create({
+        await Lossitem.create({
             name,
             type,
             date,
@@ -117,8 +118,8 @@ const addLossItem = async (req, res) => {
             desc,
             uid,
         })
-        if (!lossitem)
-            return res.send({ status: 200, message: '添加寻物信息失败', sucess: false })
+        // if (!lossitem)
+        //     return res.send({ status: 200, message: '添加寻物信息失败', sucess: false })
         return res.send({
             status: 200,
             message: '添加成功',
@@ -129,7 +130,7 @@ const addLossItem = async (req, res) => {
         return res.send({ status: 200, msg: '添加寻物信息失败', sucess: false })
     }
 }
-
+///////////////////////////////////////
 // 修改寻物信息
 const updateLossItem = async (req, res) => {
     try {
@@ -160,7 +161,7 @@ const updateLossItem = async (req, res) => {
     }
 
 }
-
+////////////////////////////////////////
 // 删除寻物信息
 const deleteLossItem = async (req, res) => {
     try {
@@ -181,6 +182,27 @@ const deleteLossItem = async (req, res) => {
         return res.send({ status: 200, message: '删除失物信息失败', sucess: false })
     }
 }
+
+///////////////////////////////////////////
+// 修改寻物信息状态
+const editLossItemStatus = async (req, res) => {
+    try {
+        const { lid, isfound } = req.body
+        await Lossitem.update({
+            isfound,
+        },
+            {
+                where: {
+                    lid,
+                },
+            })
+        return res.send({ status: 200, message: '修改成功', sucess: true })
+    }
+    catch (e) {
+        return res.send({ status: 200, message: '修改失物信息状态失败', sucess: false })
+    }
+}
+
 
 // 查询寻物类型信息
 const queryLossItemType = async (req, res) => {
@@ -205,25 +227,6 @@ const queryLossItemType = async (req, res) => {
     }
     catch (e) {
         return res.send({ status: 200, message: '查询失败', sucess: false })
-    }
-}
-
-// 修改寻物信息状态
-const editLossItemStatus = async (req, res) => {
-    try {
-        const { lid, isfound } = req.body
-        await Lossitem.update({
-            isfound,
-        },
-            {
-                where: {
-                    lid,
-                },
-            })
-        return res.send({ status: 200, message: '修改成功', sucess: true })
-    }
-    catch (e) {
-        return res.send({ status: 200, message: '修改失物信息状态失败', sucess: false })
     }
 }
 

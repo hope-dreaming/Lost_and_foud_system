@@ -25,20 +25,20 @@ export async function getOneLossItem(params: LossitemOneQueryType) {
 
     return res
 }
-
+/////////////////////////////////////////////
 export async function addLossItemInform(params: LossitemType) {
-    const url = `http://locahost:3000/api/addLossItem`;
+    const url = `api/addLossItem`;
     const res = await request.post(url, params);
     return res
 }
-
+///////////////////////////////////////////////////
 // 0 const {id} = req.body
 export async function deleteLossItem(params: DeleteType) {
     const url = "api/deleteLossItem"
     const res = await request.post(url, params);
     return res
 }
-
+//////////////////////////////////////////////////
 // 0  const { name, type, date, place, desc, lid, uid } = req.body
 export async function updateLossItemInform(params: LossitemType) {
     const url = "api/updateLossItem";

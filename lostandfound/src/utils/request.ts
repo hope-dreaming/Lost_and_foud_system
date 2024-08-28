@@ -19,6 +19,7 @@ interface AxiosInstanceType extends AxiosInstance {
 
 export const CreateAxiosInstance = (config?: AxiosRequestConfig): AxiosInstanceType => {
     const instance = axios.create({
+        baseURL: 'http://localhost:3005',
         timeout: 100000,
         ...config
     })
