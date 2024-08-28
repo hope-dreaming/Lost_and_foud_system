@@ -59,15 +59,17 @@ const FounditemLayout: React.FC<FounditemLayoutType> = ({
         values.date = dayjs(values.date).format('YYYY-MM-DD HH:mm:ss')
       }
       if (editData?.fid) {
-        await updateFoundItem({
+        const res = await updateFoundItem({
           ...values,
           fid: editData.fid,
           // uid: editData.uid,
         });
-        message.success("更新成功");
+        if (res.sucess === true)
+          message.success("更新成功");
       } else {
-        await addFoundItem(values);
-        message.success("创建成功");
+        const res = await addFoundItem(values);
+        if (res.sucess === true)
+          message.success("创建成功");
       }
       if (user?.role === USER_ROLE.ADMIN) {
         setTimeout(() => {
@@ -80,6 +82,7 @@ const FounditemLayout: React.FC<FounditemLayoutType> = ({
       }
 
     } catch (error) {
+      message.error("记录更改失败");
       console.error(error);
     }
   };

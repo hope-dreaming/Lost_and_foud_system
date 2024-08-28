@@ -53,14 +53,16 @@ const UserLayout: React.FC<UserFormProps> = ({
     const handleFinish = async (values: UserInfoType) => {
         try {
             if (editData?.uid) {
-                await updateUserInfo({
+                const res = await updateUserInfo({
                     ...values,
                     uid: editData.uid,
                 });
-                message.success("更新成功");
+                if (res.sucess === true)
+                    message.success("更新成功");
             } else {
-                await addUserInfo(values);
-                message.success("创建成功");
+                const res = await addUserInfo(values);
+                if (res.sucess === true)
+                    message.success("创建成功");
             }
             setTimeout(() => {
                 router.push("/backend/user");

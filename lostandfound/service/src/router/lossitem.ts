@@ -17,7 +17,7 @@ const queryLossItemList = async (req, res) => {
         })
 
         if (!LossitemList)
-            return res.send({ status: 200, message: '无寻物信息', data: null })
+            return res.send({ status: 200, message: '无寻物信息', data: null, sucess: false })
 
         const result = []
         for (const list of LossitemList) {
@@ -35,11 +35,12 @@ const queryLossItemList = async (req, res) => {
             status: 200,
             message: '查询成功',
             data: result,
+            sucess: true
         })
 
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 }
 
@@ -49,7 +50,7 @@ const queryLossItemInfo = async (req, res) => {
     try {
         const { item_name, item_type, userId } = req.body
         if (!userId)
-            return res.send({ status: 200, message: '请登录', data: null })
+            return res.send({ status: 200, message: '请登录', data: null, sucess: false })
         const whereReturnItem = {
             ...((item_name !== null && item_name !== undefined && item_name !== '') ? { name: item_name } : {}),
             ...((item_type !== null && item_type !== undefined && item_type !== '') ? { type: item_type } : {}),
@@ -59,15 +60,16 @@ const queryLossItemInfo = async (req, res) => {
             where: whereReturnItem,
         })
         if (!LossitemInfo)
-            return res.send({ status: 200, message: '无寻物信息', data: null })
+            return res.send({ status: 200, message: '无寻物信息', data: null, sucess: false })
         return res.send({
             status: 200,
             message: '查询成功',
             data: LossitemInfo,
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 }
 
@@ -211,7 +213,7 @@ const queryLossItemType = async (req, res) => {
             attributes: ['type'],
         })
         if (!lossitemType)
-            return res.send({ status: 200, message: '无失物类型', sucess: false })
+            return res.send({ status: 200, message: '无失物类型', sucess: false, data: null })
 
         const uniqueTypes = new Set(lossitemType.map(item => item.type));
 
@@ -226,7 +228,7 @@ const queryLossItemType = async (req, res) => {
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: '查询失败', sucess: false })
+        return res.send({ status: 200, message: '查询失败', sucess: false, data: null })
     }
 }
 

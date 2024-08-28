@@ -29,7 +29,7 @@ const queryAdminReturnitemList = async (req, res) => {
         })
 
         if (!returnitemList)
-            return res.send({ status: 200, message: '查询失败', data: null })
+            return res.send({ status: 200, message: '查询失败', data: null, sucess: false })
 
         const result = []
         for (const list of returnitemList) {
@@ -48,10 +48,11 @@ const queryAdminReturnitemList = async (req, res) => {
             status: 200,
             message: '查询成功',
             data: result,
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 }
 
@@ -78,7 +79,7 @@ const queryUserReturnitemList = async (req, res) => {
         })
 
         if (!returnitemList)
-            return res.send({ status: 200, message: '查询失败', data: null })
+            return res.send({ status: 200, message: '查询失败', data: null, sucess: false })
 
         const result = []
         for (const list of returnitemList) {
@@ -95,12 +96,13 @@ const queryUserReturnitemList = async (req, res) => {
 
         return res.send({
             status: 200,
+            sucess: true,
             message: '查询成功',
             data: result,
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 }
 // 增加申请

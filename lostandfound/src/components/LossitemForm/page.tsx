@@ -60,17 +60,19 @@ const LossitemLayout: React.FC<LossitemLayoutType> = ({
             }
             if (editData?.lid) {
                 console.log(values);
-                await updateLossItemInform({
+                const res = await updateLossItemInform({
                     ...values,
                     lid: editData.lid,
                 });
-                message.success("更新成功");
+                if (res.sucess === true)
+                    message.success("更新成功");
             } else {
-                await addLossItemInform({
+                const res = await addLossItemInform({
                     ...values,
                     // uid: user?.uid,
                 });
-                message.success("创建成功");
+                if (res.sucess === true)
+                    message.success("创建成功");
             }
             if (user?.role === USER_ROLE.ADMIN) {
                 setTimeout(() => {

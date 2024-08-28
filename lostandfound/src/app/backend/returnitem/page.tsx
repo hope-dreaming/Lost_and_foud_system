@@ -170,10 +170,14 @@ export default function Returnitem() {
                 cancelText: "取消",
                 async onOk() {
                     try {
-                        await updateReturnitem(params);
-                        message.success("审核通过");
-                        fetchData(form.getFieldsValue());
+                        const res = await updateReturnitem(params);
+                        if (res.sucess === true) {
+                            message.success("审核通过");
+                            fetchData(form.getFieldsValue());
+                        }
+
                     } catch (error) {
+                        message.error("审核失败");
                         console.error(error);
                     }
                 },
@@ -185,10 +189,14 @@ export default function Returnitem() {
                 cancelText: "取消",
                 async onOk() {
                     try {
-                        await updateReturnitem(params);
-                        message.success("审核驳回");
-                        fetchData(form.getFieldsValue());
+                        const res = await updateReturnitem(params);
+                        if (res.sucess === true) {
+                            message.success("审核驳回");
+                            fetchData(form.getFieldsValue());
+                        }
+
                     } catch (error) {
+                        message.error("审核失败");
                         console.error(error);
                     }
                 },

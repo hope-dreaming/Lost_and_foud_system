@@ -96,10 +96,14 @@ export default function Returnitemdetail() {
             cancelText: "取消",
             async onOk() {
                 try {
-                    await deleteReturnitem(params);
-                    message.success("删除成功");
-                    fetchData(form.getFieldsValue());
+                    const res = await deleteReturnitem(params);
+                    if (res.sucess === true) {
+                        message.success("删除成功");
+                        fetchData(form.getFieldsValue());
+                    }
+
                 } catch (error) {
+                    message.error("删除失败");
                     console.error(error);
                 }
             },

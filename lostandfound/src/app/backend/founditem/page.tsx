@@ -159,11 +159,15 @@ export default function Lossitem() {
             cancelText: "取消",
             async onOk() {
                 try {
-                    await deleteFoundItem(params);
-                    message.success("删除成功");
-                    fetchData(form.getFieldsValue());
+                    const res = await deleteFoundItem(params);
+                    if (res.sucess === true) {
+                        message.success("删除成功");
+                        fetchData(form.getFieldsValue());
+                    }
+
                 } catch (error) {
                     console.error(error);
+                    message.error("删除失败");
                 }
             },
         });
@@ -176,10 +180,14 @@ export default function Lossitem() {
             cancelText: "取消",
             async onOk() {
                 try {
-                    await addReturnitem(id);
-                    message.success("申请成功");
-                    fetchData(form.getFieldsValue());
+                    const res = await addReturnitem(id);
+                    if (res.sucess === true) {
+                        message.success("申请成功");
+                        fetchData(form.getFieldsValue());
+                    }
+
                 } catch (error) {
+                    message.error("申请失败");
                     console.error(error);
                 }
             },

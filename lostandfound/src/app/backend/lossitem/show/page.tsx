@@ -99,10 +99,14 @@ export default function Lossitem() {
             cancelText: "取消",
             async onOk() {
                 try {
-                    await editLossItemStatus(params);
-                    message.success("操作成功");
-                    fetchData(form.getFieldsValue());
+                    const res = await editLossItemStatus(params);
+                    if (res.sucess === true) {
+                        message.success("操作成功");
+                        fetchData(form.getFieldsValue());
+                    }
+
                 } catch (error) {
+                    message.error("操作失败");
                     console.error(error);
                 }
             },
@@ -116,10 +120,14 @@ export default function Lossitem() {
             cancelText: "取消",
             async onOk() {
                 try {
-                    await deleteLossItem(params);
-                    message.success("删除成功");
-                    fetchData(form.getFieldsValue());
+                    const res = await deleteLossItem(params);
+                    if (res.sucess === true) {
+                        message.success("删除成功");
+                        fetchData(form.getFieldsValue());
+                    }
+
                 } catch (error) {
+                    message.error("删除失败");
                     console.error(error);
                 }
             },

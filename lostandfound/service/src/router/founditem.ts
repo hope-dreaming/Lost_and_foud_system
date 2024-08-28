@@ -19,7 +19,7 @@ const queryFoundItemList = async (req, res) => {
             where: whereFounditem,
         })
         if (!founditemList)
-            return res.send({ status: 200, msg: '无失物信息' })
+            return res.send({ status: 200, message: '无失物信息', data: null, sucess: false })
 
         const result = []
 
@@ -37,14 +37,15 @@ const queryFoundItemList = async (req, res) => {
         }
         return res.send({
             status: 200,
-            msg: '查询成功',
-            data: result
+            message: '查询成功',
+            data: result,
+            sucess: true,
         })
 
 
     }
     catch (e) {
-        return res.send({ status: 200, msg: '查询错误' })
+        return res.send({ status: 200, message: '查询错误', sucess: false, data: null })
     }
 
 }
@@ -63,19 +64,20 @@ const queryFoundItemInfo = async (req, res) => {
             where: whereFounditem,
         })
         if (!founditemList)
-            return res.send({ status: 200, msg: '无失物信息' })
+            return res.send({ status: 200, message: '无失物信息', data: null, sucess: false })
 
 
         return res.send({
             status: 200,
             msg: '查询成功',
-            data: founditemList
+            data: founditemList,
+            sucess: true,
         })
 
 
     }
     catch (e) {
-        return res.send({ status: 200, msg: '查询错误' })
+        return res.send({ status: 200, message: '查询错误', data: null, sucess: false })
     }
 }
 
@@ -85,14 +87,14 @@ const queryOneFoundItem = async (req, res) => {
     try {
         const { id } = req.body
         if (!id)
-            return res.send({ status: 200, message: '无该物品信息', data: null })
+            return res.send({ status: 200, message: '无该物品信息', data: null, sucess: false })
         const FounditemInfo = await Founditem.findOne({
             where: {
                 fid: id
             },
         })
         if (!Founditem)
-            return res.send({ status: 200, message: '无失物信息', data: null })
+            return res.send({ status: 200, message: '无失物信息', data: null, sucess: false })
         const { uid } = FounditemInfo
         const user = await User.findOne({
             where: { uid },
@@ -105,10 +107,11 @@ const queryOneFoundItem = async (req, res) => {
                 ...FounditemInfo.toJSON(),
                 tele: user.tele,
             },
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, message: e.message, data: null })
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
     }
 
 }
@@ -219,7 +222,7 @@ const queryFountitemType = async (req, res) => {
             attributes: ['type'],
         })
         if (!founditemType)
-            return res.send({ status: 200, msg: '无失物类型' })
+            return res.send({ status: 200, message: '无失物类型', data: null, sucess: false })
 
         const uniqueTypes = new Set(founditemType.map(item => item.type));
 
@@ -229,11 +232,12 @@ const queryFountitemType = async (req, res) => {
         return res.send({
             status: 200,
             msg: '查询成功',
-            data: data
+            data: data,
+            sucess: true
         })
     }
     catch (e) {
-        return res.send({ status: 200, msg: '查询失败' })
+        return res.send({ status: 200, message: '查询失败', sucess: false, data: null })
     }
 }
 

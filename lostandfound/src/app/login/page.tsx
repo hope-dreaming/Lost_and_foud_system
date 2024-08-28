@@ -14,7 +14,7 @@ export default function Login() {
     const onFinish = async (values: UserLoginType) => {
         try {
             const res = await request.post("/api/login", values);
-            if (res.sucess) {
+            if (res.sucess === true) {
                 message.success("登陆成功");
                 localStorage.setItem("user", JSON.stringify(
                     {
