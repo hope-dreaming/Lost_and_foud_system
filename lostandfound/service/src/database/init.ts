@@ -5,7 +5,7 @@ const sequelize: any = new Sequelize(
     host: 'localhost',
     dialect: 'mysql',
     port: '3306',
-    // logging: false,
+    logging: false,
 });
 
 // 连接

@@ -10,8 +10,25 @@ const nextConfig = {
                     'http://localhost:3005/api/:path*'
             },
         ];
-    }
+    },
+    async redirects() {
+        return [
+            // Basic redirect
+            {
+                source: '/',
+                destination: '/login',
+                permanent: true,
+            },
+            // Wildcard path matching
+            //   {
+            //     source: '/blog/:slug',
+            //     destination: '/news/:slug',
+            //     permanent: true,
+            //   },
+        ]
+    },
 };
+
 
 
 export default nextConfig;
