@@ -6,78 +6,19 @@ import { Founditem } from 'src/database/models/founditem'
 import { Returnitem } from 'src/database/models/returnitem'
 import { User } from 'src/database/models/user'
 
-// 管理员查询列表
-const queryAdminReturnitemList = async (req, res) => {
+
+// 用户查询待办事项 
+const queryUserReturnNotList = async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     try {
-        const { item_fid, item_tele, isok, item_uaid } = req.body
-        const user = await User.findOne({
-            where: { ...((item_tele !== null && item_tele !== undefined && item_tele !== '') ? { tele: item_tele } : {}), },
-        })
-        const user_uid = user.uid
-        const admin = await User.findOne({
-            where: { ...((item_uaid !== null && item_uaid !== undefined && item_uaid !== '') ? { tele: item_uaid } : {}), },
-        })
-        const admin_uid = admin.uid
-        const whereReturnItem = {
-            ...((user_uid !== null && user_uid !== undefined && user_uid !== '') ? { uid: user_uid } : {}),
-            ...((item_fid !== null && item_fid !== undefined && item_fid !== '') ? { fid: item_fid } : {}),
-            ...((isok === 2) ? { isok } : { isok: { [Op.notIn]: [2] } }),
-            ...((admin_uid !== null && admin_uid !== undefined && admin_uid !== '') ? { uaid: admin_uid } : {}),
-        }
-        const returnitemList = await Returnitem.findAll({
-            where: whereReturnItem,
-        })
-
-        if (!returnitemList)
-            return res.send({ status: 200, message: '查询失败', data: null, sucess: false })
-
-        const result = []
-        for (const list of returnitemList) {
-            const { uid } = list
-            const user = await User.findOne({
-                where: { uid },
-                attributes: ['tele'],
-            })
-            result.push({
-                ...list.toJSON(),
-                tele: user.tele,
-            })
-        }
-
-        return res.send({
-            status: 200,
-            message: '查询成功',
-            data: result,
-            sucess: true
-        })
-    }
-    catch (e) {
-        return res.send({ status: 200, message: e.message, data: null, sucess: false })
-    }
-}
-
-// 用户查询列表 
-const queryUserReturnitemList = async (req, res) => {
-    res.setHeader('Content-Type', 'application/json')
-    try {
-        const { item_fid, isok, userId, item_uaid } = req.body
+        const { item_fid, userId } = req.body
         if (!userId)
             return res.send({ status: 200, message: '参数错误', data: null, sucess: false })
-
-        let admin_uid = null
-        if (!item_uaid) {
-            const admin = await User.findOne({
-                where: { ...((item_uaid !== null && item_uaid !== undefined && item_uaid !== '') ? { tele: item_uaid } : {}), },
-            })
-            admin_uid = admin.uid
-        }
 
         const whereReturnItem = {
             ...((userId !== null && userId !== undefined && userId !== '') ? { uid: userId } : {}),
             ...((item_fid !== null && item_fid !== undefined && item_fid !== '') ? { fid: item_fid } : {}),
-            ...((isok === 2) ? { isok } : { isok: { [Op.notIn]: [2] } }),
-            ...((admin_uid !== null && admin_uid !== undefined && admin_uid !== '') ? { uaid: admin_uid } : {}),
+            isok: 2,
         }
         const returnitemList = await Returnitem.findAll({
             where: whereReturnItem,
@@ -105,7 +46,174 @@ const queryUserReturnitemList = async (req, res) => {
             status: 200,
             sucess: true,
             message: '查询成功',
-            data: returnitemList,
+            data: result,
+        })
+    }
+    catch (e) {
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
+    }
+}
+
+// 用户查询完成事项
+const queryUserReturnOkList = async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    try {
+        const { item_fid, userId, item_uaid } = req.body
+        if (!userId)
+            return res.send({ status: 200, message: '参数错误', data: null, sucess: false })
+        let admin_uid = 0
+        if (item_uaid !== null && item_uaid !== undefined && item_uaid !== '') {
+            const admin = await User.findOne({
+                where: { tele: item_uaid },
+            })
+            admin_uid = admin.uid
+        }
+
+        const whereReturnItem = {
+            ...((userId !== null && userId !== undefined && userId !== '') ? { uid: userId } : {}),
+            ...((item_fid !== null && item_fid !== undefined && item_fid !== '') ? { fid: item_fid } : {}),
+            ...((admin_uid !== null && admin_uid !== undefined && admin_uid !== 0) ? { uaid: admin_uid } : {}),
+            isok: {
+                [Op.or]: [0, 1]
+            },
+        }
+        const returnitemList = await Returnitem.findAll({
+            where: whereReturnItem,
+        })
+
+        if (!returnitemList)
+            return res.send({ status: 200, message: '查询失败', data: null, sucess: false })
+
+        const result = []
+        for (const list of returnitemList) {
+            const { uid } = list
+            const user = await User.findOne({
+                where: { uid },
+                attributes: ['tele'],
+            })
+            result.push({
+                ...list.toJSON(),
+                tele: user.tele,
+                date: dayjs(list.createdAt).format('YYYY-MM-DD HH:mm'),
+            })
+        }
+
+
+        return res.send({
+            status: 200,
+            sucess: true,
+            message: '查询成功',
+            data: result,
+        })
+    }
+    catch (e) {
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
+    }
+}
+// 管理员查询待办事项
+const queryAdminReturnNotList = async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    try {
+        const { item_fid, item_tele } = req.body
+        let user_uid = 0
+        if (item_tele !== null && item_tele !== undefined && item_tele !== '') {
+            const user = await User.findOne({
+                where: { tele: item_tele },
+            })
+            user_uid = user.uid
+        }
+
+        const whereReturnItem = {
+            ...((user_uid !== null && user_uid !== undefined && user_uid !== 0) ? { uid: user_uid } : {}),
+            ...((item_fid !== null && item_fid !== undefined && item_fid !== '') ? { fid: item_fid } : {}),
+            isok: 2,
+        }
+        const returnitemList = await Returnitem.findAll({
+            where: whereReturnItem,
+        })
+
+        if (!returnitemList)
+            return res.send({ status: 200, message: '查询失败', data: null, sucess: false })
+
+        const result = []
+        for (const list of returnitemList) {
+            const { uid } = list
+            const user = await User.findOne({
+                where: { uid },
+                attributes: ['tele'],
+            })
+            result.push({
+                ...list.toJSON(),
+                tele: user.tele,
+                date: dayjs(list.createdAt).format('YYYY-MM-DD HH:mm'),
+            })
+        }
+
+        return res.send({
+            status: 200,
+            message: '查询成功',
+            data: result,
+            sucess: true
+        })
+    }
+    catch (e) {
+        return res.send({ status: 200, message: e.message, data: null, sucess: false })
+    }
+}
+//管理员查询完成事项
+const queryAdminReturnOkList = async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    try {
+        const { item_fid, item_tele, item_uaid } = req.body
+        let user_uid = 0
+        let admin_uid = 0
+        if (item_tele !== null && item_tele !== undefined && item_tele !== '') {
+            const user = await User.findOne({
+                where: { tele: item_tele },
+            })
+            user_uid = user.uid
+        }
+        if (item_uaid !== null && item_uaid !== undefined && item_uaid !== '') {
+            const admin = await User.findOne({
+                where: { tele: item_uaid },
+            })
+            admin_uid = admin.uid
+        }
+
+        const whereReturnItem = {
+            ...((user_uid !== null && user_uid !== undefined && user_uid !== 0) ? { uid: user_uid } : {}),
+            ...((item_fid !== null && item_fid !== undefined && item_fid !== '') ? { fid: item_fid } : {}),
+            ...((admin_uid !== null && admin_uid !== undefined && admin_uid !== 0) ? { uaid: admin_uid } : {}),
+            isok: {
+                [Op.or]: [0, 1]
+            },
+        }
+        const returnitemList = await Returnitem.findAll({
+            where: whereReturnItem,
+        })
+
+        if (!returnitemList)
+            return res.send({ status: 200, message: '查询失败', data: null, sucess: false })
+
+        const result = []
+        for (const list of returnitemList) {
+            const { uid } = list
+            const user = await User.findOne({
+                where: { uid },
+                attributes: ['tele'],
+            })
+            result.push({
+                ...list.toJSON(),
+                tele: user.tele,
+                date: dayjs(list.createdAt).format('YYYY-MM-DD HH:mm'),
+            })
+        }
+
+        return res.send({
+            status: 200,
+            message: '查询成功',
+            data: result,
+            sucess: true
         })
     }
     catch (e) {
@@ -212,9 +320,11 @@ const deleteReturnitem = async (req, res) => {
 }
 
 export {
-    queryAdminReturnitemList,
-    queryUserReturnitemList,
     addReturnitem,
     updateReturnitem,
     deleteReturnitem,
+    queryUserReturnNotList,
+    queryUserReturnOkList,
+    queryAdminReturnNotList,
+    queryAdminReturnOkList,
 }

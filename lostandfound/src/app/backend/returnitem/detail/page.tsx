@@ -3,15 +3,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
-import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import { getLossItemList } from '@/api/lossitem';
-import { LossitemQuery, ReturnitemQueryType } from '@/types';
+import { ReturnitemQueryType } from '@/types';
 import Content from '@/components/Content';
-import { getFoundItemList } from '@/api/founditem';
 import { useCurrentUser } from '@/utils/hoos';
 import { usePathname } from 'next/navigation';
-import { deleteReturnitem, getAdiminReturnitemList, getUserReturnitemList } from '@/api';
+import { deleteReturnitem, getAdminReturnOkList, getUserReturnOkList, } from '@/api';
 import { USER_ROLE } from '@/constants';
 
 export default function Returnitemdetail() {
@@ -124,13 +121,12 @@ export default function Returnitemdetail() {
         (search?: ReturnitemQueryType) => {
             if (user?.role === USER_ROLE.ADMIN) {
                 const { item_fid, item_tele, item_uaid } = search || {};
-                getAdiminReturnitemList({
+                getAdminReturnOkList({
                     current: pagination.current as number,
                     pageSize: pagination.pageSize as number,
                     item_fid,
                     item_tele,
                     item_uaid,
-                    isok,
                 }).then((res) => {
                     setData(res.data);
                     console.log(res)
@@ -138,11 +134,10 @@ export default function Returnitemdetail() {
                 });
             } else if (user?.role === USER_ROLE.USER) {
                 const { item_fid, item_uaid } = search || {};
-                getUserReturnitemList({
+                getUserReturnOkList({
                     current: pagination.current as number,
                     pageSize: pagination.pageSize as number,
                     item_fid,
-                    isok,
                     item_uaid,
                     userId: user?.uid
                 }).then((res) => {

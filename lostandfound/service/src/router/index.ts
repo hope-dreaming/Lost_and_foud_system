@@ -1,7 +1,7 @@
 import express from 'express'
 import { addUserInfo, deleteUserInfo, queryUserInfo, queryUserList, updateUserInfo, updateUserSatus } from './user'
 import { login, register } from './login'
-import { addReturnitem, deleteReturnitem, queryAdminReturnitemList, queryUserReturnitemList, updateReturnitem } from './returnitem'
+import { addReturnitem, deleteReturnitem, queryAdminReturnNotList, queryAdminReturnOkList, queryUserReturnNotList, queryUserReturnOkList, updateReturnitem } from './returnitem'
 import { addFoundItem, deleteFoundItem, editFoundItemStatus, queryFoundItemInfo, queryFoundItemList, queryFountitemType, queryOneFoundItem, updateFoundItem } from './founditem'
 import { queryLossItemList, queryLossItemInfo, addLossItem, updateLossItem, deleteLossItem, queryLossItemType, queryOneLossItem, editLossItemStatus } from './lossitem'
 
@@ -50,9 +50,13 @@ router.post('/editFoundItemStatus', editFoundItemStatus)
 
 // 归还记录
 
-router.post('/queryAdminReturnitemList', queryAdminReturnitemList)
+router.post('/queryUserReturnNotList', queryUserReturnNotList)
 
-router.post('/queryUserReturnitemList', queryUserReturnitemList)
+router.post('/queryUserReturnOkList', queryUserReturnOkList)
+
+router.post('/queryAdminReturnNotList', queryAdminReturnNotList)
+
+router.post('/queryAdminReturnOkList', queryAdminReturnOkList)
 
 router.post('/addReturnitem', addReturnitem)
 

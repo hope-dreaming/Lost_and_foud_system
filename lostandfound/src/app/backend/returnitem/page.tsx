@@ -3,17 +3,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Col, Flex, Form, Input, message, Modal, Row, Space, Table, TablePaginationConfig, Tag, Tooltip } from 'antd';
 import styles from './page.module.css'
-import axios from 'axios';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import { getLossItemList } from '@/api/lossitem';
-import { LossitemQuery, ReturnitemQueryType } from '@/types';
+import { ReturnitemQueryType } from '@/types';
 import Content from '@/components/Content';
-import { getFoundItemList } from '@/api/founditem';
-import { getAdiminReturnitemList, getUserReturnitemList, updateReturnitem } from '@/api';
+import { getAdminReturnNotList, getUserReturnNotList, updateReturnitem } from '@/api';
 import { useCurrentUser } from '@/utils/hoos';
 import { usePathname } from 'next/navigation';
 import { RETURN_ISOK, USER_ROLE } from '@/constants';
-import { getArrowOffsetToken } from 'antd/es/style/placementArrow';
+
 
 export default function Returnitem() {
 
@@ -121,12 +118,12 @@ export default function Returnitem() {
         (search?: ReturnitemQueryType) => {
             if (user?.role === USER_ROLE.ADMIN) {
                 const { item_fid, item_tele } = search || {};
-                getAdiminReturnitemList({
+                // 管理员查询待办需要领取人账号，可选；物品编号，可选；所有未处理的申请
+                getAdminReturnNotList({
                     current: pagination.current as number,
                     pageSize: pagination.pageSize as number,
                     item_fid,
                     item_tele,
-                    isok,
                 }).then((res) => {
                     setData(res.data);
                     console.log(res)
@@ -134,15 +131,15 @@ export default function Returnitem() {
                 });
             } else if (user?.role === USER_ROLE.USER) {
                 const { item_fid } = search || {};
-                getUserReturnitemList({
+                // 用户查询待办物品申请；物品编号，可选；所有未处理的申请，用户id，必选
+                getUserReturnNotList({
                     current: pagination.current as number,
                     pageSize: pagination.pageSize as number,
                     item_fid,
-                    isok,
                     userId: user?.uid
                 }).then((res) => {
                     setData(res.data);
-                    console.log(res)
+                    // console.log(res)
                     setTotal(res.total);
                 });
             }
