@@ -53,9 +53,9 @@ export default function Login() {
                         <Form.Item
                             name="tele"
                             label={<span className={styles.label}>账号</span>}
-                            rules={[{ required: true, message: "请输入用户名" }]}
+                            rules={[{ required: true, message: "请输入账号" }]}
                         >
-                            <Input placeholder="请输入用户名" />
+                            <Input placeholder="请输入账号" />
                         </Form.Item>
                         <Form.Item
                             name="password"
@@ -63,6 +63,20 @@ export default function Login() {
                             rules={[{ required: true, message: "请输入密码" }]}
                         >
                             <Input.Password placeholder="请输入密码" />
+                        </Form.Item>
+                        <Form.Item >
+                            <Button
+                            >
+                                忘记密码？
+                            </Button>
+                            <Button
+                                className={styles.register}
+                                onClick={() => {
+                                    router.push("/register");
+                                }}
+                            >
+                                注册
+                            </Button>
                         </Form.Item>
                         <Form.Item>
                             <Button

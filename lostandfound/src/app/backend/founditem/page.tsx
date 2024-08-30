@@ -103,7 +103,7 @@ export default function Lossitem() {
             render: (_: any, record: any) => (
                 <Flex>
                     <Space size="middle">
-                        <Button type="primary" ghost onClick={() => { handleApply(record.fid as number) }}>申请领取</Button>
+                        <Button type="primary" ghost onClick={() => { handleApply(record.fid as number, user?.uid as number) }}>申请领取</Button>
                     </Space>
                 </Flex>
             ),
@@ -173,17 +173,21 @@ export default function Lossitem() {
         });
     };
 
-    const handleApply = (id: number) => {
+    const handleApply = (fid: number, uid: number) => {
         Modal.confirm({
             title: "确认申请领取？",
             okText: "确定",
             cancelText: "取消",
             async onOk() {
                 try {
-                    const res = await addReturnitem(id);
+                    const params = { fid, uid }
+                    const res = await addReturnitem(params);
                     if (res.sucess === true) {
                         message.success("申请成功");
                         fetchData(form.getFieldsValue());
+                    }
+                    else {
+                        message.error("申请失败");
                     }
 
                 } catch (error) {

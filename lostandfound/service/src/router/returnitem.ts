@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/indent */
+import dayjs from 'dayjs'
 import { Op } from 'sequelize'
 import { sequelize } from 'src/database/init'
 import { Founditem } from 'src/database/models/founditem'
@@ -64,10 +65,14 @@ const queryUserReturnitemList = async (req, res) => {
         if (!userId)
             return res.send({ status: 200, message: '参数错误', data: null, sucess: false })
 
-        const admin = await User.findOne({
-            where: { ...((item_uaid !== null && item_uaid !== undefined && item_uaid !== '') ? { tele: item_uaid } : {}), },
-        })
-        const admin_uid = admin.uid
+        let admin_uid = null
+        if (!item_uaid) {
+            const admin = await User.findOne({
+                where: { ...((item_uaid !== null && item_uaid !== undefined && item_uaid !== '') ? { tele: item_uaid } : {}), },
+            })
+            admin_uid = admin.uid
+        }
+
         const whereReturnItem = {
             ...((userId !== null && userId !== undefined && userId !== '') ? { uid: userId } : {}),
             ...((item_fid !== null && item_fid !== undefined && item_fid !== '') ? { fid: item_fid } : {}),
@@ -91,14 +96,16 @@ const queryUserReturnitemList = async (req, res) => {
             result.push({
                 ...list.toJSON(),
                 tele: user.tele,
+                date: dayjs(list.createdAt).format('YYYY-MM-DD HH:mm'),
             })
         }
+
 
         return res.send({
             status: 200,
             sucess: true,
             message: '查询成功',
-            data: result,
+            data: returnitemList,
         })
     }
     catch (e) {
@@ -108,21 +115,21 @@ const queryUserReturnitemList = async (req, res) => {
 // 增加申请
 const addReturnitem = async (req, res) => {
     try {
-        const { uid, date, fid } = req.body
+        const { uid, fid } = req.body
 
         await sequelize.transaction(async (t) => {
-            await Returnitem.create({
-                uid,
-                date,
-                fid,
-            }, { transaction: t })
 
-            const result = await Founditem.update({
+            await Founditem.update({
                 isreturn: 2,
-            }, { where: { fid, }, },
+            }, { where: { fid }, },
                 { transaction: t })
 
-            return result
+            await Returnitem.create({
+                uid,
+                fid,
+                isok: 2,
+            }, { transaction: t })
+
         })
         return res.send({
             status: 200,

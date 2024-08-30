@@ -1,6 +1,6 @@
 import express from 'express'
 import { addUserInfo, deleteUserInfo, queryUserInfo, queryUserList, updateUserInfo, updateUserSatus } from './user'
-import { login } from './login'
+import { login, register } from './login'
 import { addReturnitem, deleteReturnitem, queryAdminReturnitemList, queryUserReturnitemList, updateReturnitem } from './returnitem'
 import { addFoundItem, deleteFoundItem, editFoundItemStatus, queryFoundItemInfo, queryFoundItemList, queryFountitemType, queryOneFoundItem, updateFoundItem } from './founditem'
 import { queryLossItemList, queryLossItemInfo, addLossItem, updateLossItem, deleteLossItem, queryLossItemType, queryOneLossItem, editLossItemStatus } from './lossitem'
@@ -9,6 +9,8 @@ const router = express.Router()
 
 // 登录
 router.post('/login', login)
+
+router.post('/register', register)
 
 // 寻物信息
 

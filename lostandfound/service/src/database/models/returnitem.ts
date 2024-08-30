@@ -10,10 +10,6 @@ const Returnitem = sequelize.define('returnitems', {
         primaryKey: true,
         autoIncrement: true,
     },
-    date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
     isok: {
         type: DataTypes.INTEGER,
         allowNull: false,

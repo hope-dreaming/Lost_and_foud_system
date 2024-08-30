@@ -67,6 +67,33 @@ const login = async (req, res) => {
 
 }
 
+const register = async (req, res) => {
+    try {
+        const { tele, password, name, sexy } = req.body
+        await User.create({
+            tele,
+            password,
+            name,
+            sexy,
+            role: "user",
+            status: 1
+        })
+        return res.send({
+            status: 200,
+            message: "注册成功",
+            sucess: true
+        })
+    }
+    catch (e) {
+        return res.send({
+            status: 401,
+            message: "注册失败",
+            sucess: false
+        })
+    }
+}
+
 export {
     login,
+    register,
 }

@@ -45,7 +45,12 @@ export interface UserLoginType {
     tele: string;
     password: string;
 }
-
+export interface UserRegisterType {
+    tele: string;
+    password: string;
+    name: string;
+    sexy: USER_SEXY;
+}
 export interface UserQueryType {
     current?: number;
     pageSize?: number;

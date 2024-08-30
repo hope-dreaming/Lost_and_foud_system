@@ -45,7 +45,7 @@ app.use(
     expressjwt(
         { secret: JWT_SECRET, algorithms: ['HS256'] }
     ).unless({
-        path: ['/api/login'],
+        path: ['/api/login', '/api/register'],
     }))
 
 require('./database/init')

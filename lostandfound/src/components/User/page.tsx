@@ -136,7 +136,7 @@ const UserLayout: React.FC<UserFormProps> = ({
                         <Input.Password />
                     </Form.Item>
 
-                    <Form.Item
+                    {user?.role === USER_ROLE.ADMIN ? (<Form.Item
                         label="角色"
                         name="role"
                         rules={[{ required: true, message: '请选择角色' }]}
@@ -146,7 +146,7 @@ const UserLayout: React.FC<UserFormProps> = ({
                             <Radio value={USER_ROLE.ADMIN}>管理员</Radio>
                         </Radio.Group>
 
-                    </Form.Item>
+                    </Form.Item>) : null}
 
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button type="primary" htmlType="submit">
