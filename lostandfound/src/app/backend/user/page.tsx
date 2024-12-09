@@ -11,14 +11,7 @@ import { deleteUserInfo, getUserList, updateUserSatus } from '@/api';
 import { useRouter } from 'next/navigation';
 const Option = Select.Option;
 
-const STATUS = {
-    ON: 1,
-    OFF: 0,
-}
-export const STATUS_OPTIONS = [
-    { label: "正常", value: STATUS.ON },
-    { label: "禁用", value: STATUS.OFF }
-];
+
 
 export default function User() {
 

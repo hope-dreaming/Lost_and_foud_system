@@ -1,9 +1,9 @@
 import { message } from "antd"
 import { Op } from "sequelize"
-import { sequelize } from "src/database/init"
-import { Founditem } from "src/database/models/founditem"
-import { Returnitem } from "src/database/models/returnitem"
-import { User } from "src/database/models/user"
+import { sequelize } from "../database/init"
+import { Founditem } from "../database/models/founditem"
+import { Returnitem } from "../database/models/returnitem"
+import { User } from "../database/models/user"
 
 // 查询未处理的/被驳回的所有失物信息
 const queryFoundItemList = async (req, res) => {

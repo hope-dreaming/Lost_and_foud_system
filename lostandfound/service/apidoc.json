@@ -1,0 +1,8 @@
+{
+  "name": "AIcourse",
+  "version": "0.1.0",
+  "description": "AIcourse 接口文档",
+  "title": "AIcourse API",
+  "url": "http://localhost:3003/api",
+  "sampleUrl": true
+}
