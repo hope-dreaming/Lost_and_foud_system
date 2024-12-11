@@ -256,7 +256,7 @@ const updateReturnitem = async (req, res) => {
     try {
         const { isok, rid, uaid, fid } = req.body
 
-        if (!isok || !rid || !uaid || !fid)
+        if (isok==='' || isok===undefined || isok===null || !rid || !uaid || !fid)
             return res.send({
                 status: 200,
                 message: '参数错误',
